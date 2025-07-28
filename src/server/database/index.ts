@@ -17,15 +17,33 @@ export const pool = new Pool({
 // Firebase Admin initialization
 let firebaseApp: any;
 try {
-  firebaseApp = initializeApp({
-    credential: cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-    }),
-  });
+  // Try service account credentials first, fall back to Application Default Credentials
+  if (process.env.FIREBASE_PRIVATE_KEY && process.env.FIREBASE_CLIENT_EMAIL) {
+    console.log('🔑 Using Firebase service account credentials');
+    firebaseApp = initializeApp({
+      credential: cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      }),
+    });
+  } else {
+    console.log('🔑 Using Application Default Credentials (ADC)');
+    firebaseApp = initializeApp({
+      projectId: process.env.FIREBASE_PROJECT_ID || 'cashflow-finder-v2',
+    });
+  }
 } catch (error) {
   console.error('Firebase initialization error:', error);
+  // Try ADC as fallback
+  try {
+    firebaseApp = initializeApp({
+      projectId: process.env.FIREBASE_PROJECT_ID || 'cashflow-finder-v2',
+    });
+    console.log('✅ Firebase initialized with Application Default Credentials');
+  } catch (adcError) {
+    console.error('❌ Firebase ADC initialization failed:', adcError);
+  }
 }
 
 export const firestore = getFirestore(firebaseApp);
