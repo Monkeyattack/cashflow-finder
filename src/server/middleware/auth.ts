@@ -129,8 +129,8 @@ export const checkFeatureAccess = (
       // Store access info for route handlers
       req.authContext.featureAccess = {
         feature,
-        usage,
-        remaining: accessResult.remaining_usage
+        usage: usage || 1,
+        remaining: accessResult.remaining_usage || 0
       };
 
       next();
@@ -189,7 +189,8 @@ export const recordUsage = (actionType: 'search' | 'export' | 'api_call') => {
     }
 
     try {
-      const usage = req.authContext.featureAccess?.usage || 1;
+      const featureAccess = req.authContext.featureAccess;
+      const usage = 'usage' in featureAccess ? featureAccess.usage : 1;
       await subscriptionService.recordUsage(
         req.authContext.organizationId,
         actionType,

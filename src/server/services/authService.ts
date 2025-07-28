@@ -89,7 +89,8 @@ export class AuthService {
         userId: userData.id,
         organizationId: userData.organization_id,
         subscriptionTier: userData.subscription_tier,
-        permissions: this.getPermissionsForRole(userData.role)
+        permissions: this.getPermissionsForRole(userData.role),
+        featureAccess: this.getFeatureAccessForTier(userData.subscription_tier)
       };
     } catch (error) {
       console.error('Authentication error:', error);
@@ -131,6 +132,36 @@ export class AuthService {
     return permissions[role as keyof typeof permissions] || permissions.member;
   }
 
+  private getFeatureAccessForTier(tier: string) {
+    const featureAccess = {
+      starter: {
+        canExport: false,
+        canAccessAPI: false,
+        canViewPremiumAnalytics: false,
+        canAccessDueDiligence: false
+      },
+      professional: {
+        canExport: true,
+        canAccessAPI: false,
+        canViewPremiumAnalytics: true,
+        canAccessDueDiligence: true
+      },
+      enterprise: {
+        canExport: true,
+        canAccessAPI: true,
+        canViewPremiumAnalytics: true,
+        canAccessDueDiligence: true
+      }
+    };
+
+    return featureAccess[tier as keyof typeof featureAccess] || featureAccess.starter;
+  }
+
+  async getUserByEmail(email: string): Promise<User | null> {
+    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    return result.rows.length > 0 ? result.rows[0] as User : null;
+  }
+
   async generateCustomToken(authContext: AuthContext): Promise<string> {
     return jwt.sign(
       {
@@ -151,7 +182,8 @@ export class AuthService {
         userId: decoded.userId,
         organizationId: decoded.organizationId,
         subscriptionTier: decoded.subscriptionTier,
-        permissions: decoded.permissions
+        permissions: decoded.permissions,
+        featureAccess: this.getFeatureAccessForTier(decoded.subscriptionTier)
       };
     } catch (error) {
       return null;
@@ -281,7 +313,8 @@ export class AuthService {
       userId,
       organizationId,
       subscriptionTier: membership.subscription_tier,
-      permissions: this.getPermissionsForRole(membership.role)
+      permissions: this.getPermissionsForRole(membership.role),
+      featureAccess: this.getFeatureAccessForTier(membership.subscription_tier)
     };
   }
 

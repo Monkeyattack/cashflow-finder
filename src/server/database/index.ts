@@ -154,4 +154,5 @@ export const queries = {
   `,
 };
 
-export default { pool, firestore, testConnections, withTransaction, queries };
+const dbExports = { pool, firestore, testConnections, withTransaction, queries };
+export default dbExports;

@@ -115,7 +115,7 @@ export class BusinessService {
     `;
     
     // Apply same filters for count (without the joins and group by)
-    let countParams = [];
+    const countParams = [];
     let countParamCount = 1;
 
     if (query.keywords) {

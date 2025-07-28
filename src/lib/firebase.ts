@@ -26,6 +26,9 @@ linkedinProvider.addScope('openid');
 linkedinProvider.addScope('profile');
 linkedinProvider.addScope('email');
 
-// Remove GitHub provider as requested
+export const microsoftProvider = new OAuthProvider('microsoft.com');
+microsoftProvider.addScope('openid');
+microsoftProvider.addScope('profile');
+microsoftProvider.addScope('email');
 
 export default app;

@@ -42,6 +42,7 @@ export interface BusinessListing {
   id: string;
   name: string;
   industry?: string;
+  website?: string;
   location: {
     city?: string;
     state?: string;
@@ -123,6 +124,16 @@ export interface AuthContext {
   organizationId: string;
   subscriptionTier: SubscriptionTier;
   permissions: string[];
+  featureAccess: {
+    canExport: boolean;
+    canAccessAPI: boolean;
+    canViewPremiumAnalytics: boolean;
+    canAccessDueDiligence: boolean;
+  } | {
+    feature: string;
+    usage: number;
+    remaining: number;
+  };
 }
 
 export interface RiskAssessment {
