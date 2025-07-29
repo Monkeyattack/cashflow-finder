@@ -8,8 +8,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'body': ['PPMori', 'sans-serif'],
-        'heading': ['ESBuild', 'sans-serif'],
+        'body': ['Inter', 'sans-serif'],
+        'heading': ['Inter', 'sans-serif'],
       },
       colors: {
         // Extracted from marketing site

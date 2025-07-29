@@ -19,7 +19,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} font-body`}>
+      <body className={inter.className}>
         <AuthProvider>
           <ToastProvider>
             {children}

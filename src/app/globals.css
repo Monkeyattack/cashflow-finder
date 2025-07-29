@@ -5,20 +5,7 @@
 /* Import fonts from marketing site */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-/* Custom font declarations matching marketing site */
-@font-face {
-  font-family: 'PPMori';
-  src: url('/fonts/PPMori-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'ESBuild';
-  src: url('/fonts/ESBuild-Bold.woff2') format('woff2');
-  font-weight: 700;
-  font-display: swap;
-}
+/* Using Inter font from Google Fonts */
 
 :root {
   --deepocean: #1e3a8a;
@@ -79,19 +66,19 @@
   }
 
   .heading-xl {
-    @apply font-heading text-4xl md:text-5xl font-bold text-gray-900;
+    @apply text-4xl md:text-5xl font-bold text-gray-900;
   }
 
   .heading-lg {
-    @apply font-heading text-3xl md:text-4xl font-bold text-gray-900;
+    @apply text-3xl md:text-4xl font-bold text-gray-900;
   }
 
   .heading-md {
-    @apply font-heading text-2xl md:text-3xl font-bold text-gray-900;
+    @apply text-2xl md:text-3xl font-bold text-gray-900;
   }
 
   .heading-sm {
-    @apply font-heading text-xl md:text-2xl font-semibold text-gray-900;
+    @apply text-xl md:text-2xl font-semibold text-gray-900;
   }
 
   .text-muted {
