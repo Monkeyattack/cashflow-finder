@@ -20,12 +20,32 @@
 
 @layer base {
   * {
-    @apply border-border;
+    box-sizing: border-box;
   }
   body {
     @apply bg-white text-gray-900;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+  
+  /* Default image sizing */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Fix SVG icon sizing */
+  svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+  }
+  
+  /* Allow specific sizing classes to override */
+  .w-4 svg, svg.w-4 { width: 1rem; height: 1rem; }
+  .w-5 svg, svg.w-5 { width: 1.25rem; height: 1.25rem; }
+  .w-6 svg, svg.w-6 { width: 1.5rem; height: 1.5rem; }
+  .w-8 svg, svg.w-8 { width: 2rem; height: 2rem; }
+  .w-12 svg, svg.w-12 { width: 3rem; height: 3rem; }
 }
 
 @layer components {

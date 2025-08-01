@@ -12,12 +12,20 @@ CREATE TABLE organizations (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- User Management with Multi-Tenancy
+-- User Management with Multi-Tenancy and OAuth
 CREATE TABLE users (
     id VARCHAR(255) PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
     name VARCHAR(255) NOT NULL,
+    avatar_url VARCHAR(500),
     email_verified BOOLEAN DEFAULT FALSE,
+    google_id VARCHAR(255) UNIQUE,
+    linkedin_id VARCHAR(255) UNIQUE,
+    subscription_tier VARCHAR(50) DEFAULT 'starter' CHECK (subscription_tier IN ('starter', 'professional', 'enterprise')),
+    stripe_customer_id VARCHAR(255),
+    monthly_searches_used INTEGER DEFAULT 0,
+    monthly_exports_used INTEGER DEFAULT 0,
+    last_tier_reset TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -31,7 +39,7 @@ CREATE TABLE memberships (
     UNIQUE(user_id, organization_id)
 );
 
--- Business Listings with Quality Scoring
+-- Business Listings with Quality Scoring and Tier Access
 CREATE TABLE business_listings (
     id VARCHAR(255) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -41,7 +49,11 @@ CREATE TABLE business_listings (
     contact_info JSONB,
     quality_score INTEGER DEFAULT 0,
     risk_score INTEGER DEFAULT 0,
+    roi_analysis JSONB,
+    sba_qualification JSONB,
+    due_diligence_report JSONB,
     data_sources TEXT[],
+    tier_access_level VARCHAR(50) DEFAULT 'starter' CHECK (tier_access_level IN ('starter', 'professional', 'enterprise')),
     last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -65,17 +77,39 @@ CREATE TABLE usage_records (
     recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Affiliate Partners Configuration
+CREATE TABLE affiliate_partners (
+    id VARCHAR(255) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    category VARCHAR(100) NOT NULL CHECK (category IN ('financing', 'legal', 'insurance', 'due_diligence', 'business_books', 'training')),
+    affiliate_link_template VARCHAR(1000) NOT NULL,
+    commission_rate DECIMAL(5,2) DEFAULT 0.00,
+    cookie_duration_days INTEGER DEFAULT 30,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Amazon Associates Configuration
+INSERT INTO affiliate_partners (id, name, category, affiliate_link_template, commission_rate, cookie_duration_days) VALUES
+('amazon_books', 'Amazon Associates - Business Books', 'business_books', 'https://www.amazon.com/dp/{asin}?tag={associate_tag}&linkCode=ogi&th=1&psc=1', 4.00, 1),
+('legalzoom', 'LegalZoom', 'legal', 'https://www.legalzoom.com/business?utm_source=cashflowfinder&utm_medium=affiliate&utm_campaign={campaign}', 15.00, 30),
+('fundera', 'Fundera SBA Loans', 'financing', 'https://www.fundera.com/business-loans/sba-loans?utm_source=cashflowfinder&utm_medium=affiliate&partner_id={partner_id}', 25.00, 60),
+('bizplan', 'BizPlan Business Plans', 'due_diligence', 'https://www.bizplan.com/?utm_source=cashflowfinder&utm_medium=affiliate&ref={ref_code}', 20.00, 30);
+
 -- Affiliate Tracking System
 CREATE TABLE affiliate_referrals (
     id VARCHAR(255) PRIMARY KEY,
     user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
-    partner_id VARCHAR(255) NOT NULL,
+    partner_id VARCHAR(255) REFERENCES affiliate_partners(id) ON DELETE CASCADE,
+    business_listing_id VARCHAR(255) REFERENCES business_listings(id),
     service_type VARCHAR(100) NOT NULL,
+    referral_url VARCHAR(1000) NOT NULL,
     referral_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     cookie_expiry TIMESTAMP,
+    click_count INTEGER DEFAULT 0,
     conversion_value DECIMAL(12,2),
     commission_earned DECIMAL(12,2),
-    status VARCHAR(50) DEFAULT 'pending' CHECK (status IN ('pending', 'converted', 'expired'))
+    status VARCHAR(50) DEFAULT 'pending' CHECK (status IN ('pending', 'clicked', 'converted', 'expired'))
 );
 
 -- Analytics and Event Tracking
