@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Search - Cash Flow Finder</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8fafc; }
+        
+        /* Header */
+        .header-bar {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2563eb;
+        }
+        .logo img { height: 40px; }
+        .main-nav {
+            display: flex;
+            gap: 20px;
+            margin-right: 20px;
+        }
+        .nav-link {
+            color: #374151;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .nav-link:hover, .nav-link.active {
+            background: #f3f4f6;
+            color: #2563eb;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e5e7eb;
+        }
+        .user-tier {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+        .tier-enterprise { background: #d1fae5; color: #059669; }
+        .tier-professional { background: #dbeafe; color: #2563eb; }
+        .tier-starter { background: #fee2e2; color: #dc2626; }
+
+        /* Main Content */
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .page-header {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        /* Search Form */
+        .search-form {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .form-section {
+            margin-bottom: 30px;
+        }
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .form-group label {
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.875rem;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        /* Premium Features */
+        .premium-section {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .premium-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .premium-feature {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        /* Search Actions */
+        .search-actions {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+        .btn-success {
+            background: #059669;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #047857;
+        }
+
+        /* Search Results */
+        .results-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .results-header {
+            background: #f9fafb;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .results-body {
+            padding: 0;
+        }
+        .business-list {
+            display: grid;
+            gap: 1px;
+            background: #f3f4f6;
+        }
+        .business-row {
+            background: white;
+            padding: 20px 30px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
+            gap: 20px;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .business-row:hover {
+            background: #f9fafb;
+        }
+        .business-name {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        .business-location {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        .business-industry {
+            color: #374151;
+            font-size: 0.875rem;
+        }
+        .business-price {
+            font-weight: 600;
+            color: #059669;
+        }
+        .business-quality {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.875rem;
+        }
+        .quality-score {
+            background: #10b981;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Saved Searches */
+        .saved-searches {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .saved-search-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .saved-search-info {
+            flex: 1;
+        }
+        .saved-search-name {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        .saved-search-criteria {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+        .saved-search-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Loading and Empty States */
+        .loading, .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+        .empty-state {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .business-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .search-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Bar -->
+    <div class="header-bar">
+        <div class="header-content">
+            <a href="/" class="logo">
+                <img src="/favicon.svg" alt="Cash Flow Finder">
+                <span>Cash Flow Finder</span>
+            </a>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div id="mainNav" class="main-nav">
+                    <a href="/" class="nav-link">Browse</a>
+                    <a href="/search" class="nav-link active">Advanced Search</a>
+                    <a href="/alerts" class="nav-link">Email Alerts</a>
+                    <a href="/calculator" class="nav-link">SBA Calculator</a>
+                </div>
+                <div id="userInfo" class="user-info">
+                    <img id="userAvatar" class="user-avatar" src="" alt="User">
+                    <div>
+                        <div id="userName" style="font-weight: 500;"></div>
+                        <span id="userTier" class="user-tier"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 style="color: #2563eb; font-size: 2rem; margin-bottom: 10px;">🔍 Advanced Business Search</h1>
+            <p style="color: #6b7280;">Find businesses that match your specific investment criteria with powerful filtering options.</p>
+        </div>
+
+        <!-- Premium Features Banner -->
+        <div id="premiumBanner" class="premium-section" style="display: none;">
+            <h3>🚀 Enterprise Search Features</h3>
+            <div class="premium-features">
+                <div class="premium-feature">
+                    <div style="font-size: 1.25rem; margin-bottom: 5px;">📊</div>
+                    <div>Advanced Financials</div>
+                </div>
+                <div class="premium-feature">
+                    <div style="font-size: 1.25rem; margin-bottom: 5px;">🎯</div>
+                    <div>ROI Targeting</div>
+                </div>
+                <div class="premium-feature">
+                    <div style="font-size: 1.25rem; margin-bottom: 5px;">📍</div>
+                    <div>Geographic Analysis</div>
+                </div>
+                <div class="premium-feature">
+                    <div style="font-size: 1.25rem; margin-bottom: 5px;">💾</div>
+                    <div>Save & Export</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Saved Searches -->
+        <div id="savedSearches" class="saved-searches" style="display: none;">
+            <h3 style="margin-bottom: 15px;">📌 Saved Searches</h3>
+            <div id="savedSearchList">
+                <!-- Saved searches will be populated here -->
+            </div>
+        </div>
+
+        <!-- Search Form -->
+        <div class="search-form">
+            <form id="advancedSearchForm">
+                <!-- Basic Criteria -->
+                <div class="form-section">
+                    <h2 class="section-title">🔍 Basic Search Criteria</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="keywords">Keywords</label>
+                            <input type="text" id="keywords" name="keywords" placeholder="Business name, description, or industry">
+                        </div>
+                        <div class="form-group">
+                            <label for="industry">Industry</label>
+                            <select id="industry" name="industry">
+                                <option value="">All Industries</option>
+                                <option value="Food & Beverage">Food & Beverage</option>
+                                <option value="Retail">Retail</option>
+                                <option value="Healthcare">Healthcare</option>
+                                <option value="Professional Services">Professional Services</option>
+                                <option value="Automotive">Automotive</option>
+                                <option value="Personal Services">Personal Services</option>
+                                <option value="Technology">Technology</option>
+                                <option value="Construction">Construction</option>
+                                <option value="Manufacturing">Manufacturing</option>
+                                <option value="Home Services">Home Services</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="location">Location</label>
+                            <input type="text" id="location" name="location" placeholder="City, State or ZIP">
+                        </div>
+                        <div class="form-group">
+                            <label for="radius">Search Radius</label>
+                            <select id="radius" name="radius">
+                                <option value="">Any Distance</option>
+                                <option value="25">25 miles</option>
+                                <option value="50">50 miles</option>
+                                <option value="100">100 miles</option>
+                                <option value="250">250 miles</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Criteria -->
+                <div class="form-section">
+                    <h2 class="section-title">💰 Financial Criteria</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="minPrice">Minimum Price</label>
+                            <input type="number" id="minPrice" name="minPrice" placeholder="e.g. 50000" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="maxPrice">Maximum Price</label>
+                            <input type="number" id="maxPrice" name="maxPrice" placeholder="e.g. 500000" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="minRevenue">Minimum Annual Revenue</label>
+                            <input type="number" id="minRevenue" name="minRevenue" placeholder="e.g. 100000" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="maxRevenue">Maximum Annual Revenue</label>
+                            <input type="number" id="maxRevenue" name="maxRevenue" placeholder="e.g. 1000000" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="minCashFlow">Minimum Cash Flow</label>
+                            <input type="number" id="minCashFlow" name="minCashFlow" placeholder="e.g. 25000" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="maxCashFlow">Maximum Cash Flow</label>
+                            <input type="number" id="maxCashFlow" name="maxCashFlow" placeholder="e.g. 200000" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enterprise Features -->
+                <div id="enterpriseFilters" class="form-section" style="display: none;">
+                    <h2 class="section-title">🎯 Enterprise Filters <span style="background: #d1fae5; color: #059669; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">ENTERPRISE</span></h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="minROI">Minimum ROI (%)</label>
+                            <input type="number" id="minROI" name="minROI" placeholder="e.g. 15" min="0" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="maxPayback">Max Payback Period (Months)</label>
+                            <input type="number" id="maxPayback" name="maxPayback" placeholder="e.g. 36" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="riskLevel">Risk Level</label>
+                            <select id="riskLevel" name="riskLevel">
+                                <option value="">Any Risk Level</option>
+                                <option value="Low">Low Risk</option>
+                                <option value="Medium">Medium Risk</option>
+                                <option value="High">High Risk</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="establishedYear">Established After</label>
+                            <input type="number" id="establishedYear" name="establishedYear" placeholder="e.g. 2010" min="1900" max="2024">
+                        </div>
+                        <div class="form-group">
+                            <label for="qualityScore">Minimum Quality Score</label>
+                            <select id="qualityScore" name="qualityScore">
+                                <option value="">Any Quality</option>
+                                <option value="8">8+ (Excellent)</option>
+                                <option value="7">7+ (Very Good)</option>
+                                <option value="6">6+ (Good)</option>
+                                <option value="5">5+ (Fair)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="sbaEligible">SBA Loan Eligible</label>
+                            <select id="sbaEligible" name="sbaEligible">
+                                <option value="">Any</option>
+                                <option value="true">SBA Eligible Only</option>
+                                <option value="false">Non-SBA Only</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Business Features -->
+                <div class="form-section">
+                    <h2 class="section-title">🏢 Business Features</h2>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="hasWebsite" name="features" value="website">
+                            <label for="hasWebsite">Has Website</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="establishedBusiness" name="features" value="established">
+                            <label for="establishedBusiness">Established Business</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="profitableBusiness" name="features" value="profitable">
+                            <label for="profitableBusiness">Currently Profitable</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="hasEquipment" name="features" value="equipment">
+                            <label for="hasEquipment">Equipment Included</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="hasLease" name="features" value="lease">
+                            <label for="hasLease">Existing Lease</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="ownerFinancing" name="features" value="financing">
+                            <label for="ownerFinancing">Owner Financing Available</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sort Options -->
+                <div class="form-section">
+                    <h2 class="section-title">📊 Sort & Display</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="sortBy">Sort By</label>
+                            <select id="sortBy" name="sortBy">
+                                <option value="quality_score">Quality Score</option>
+                                <option value="asking_price">Price (Low to High)</option>
+                                <option value="asking_price_desc">Price (High to Low)</option>
+                                <option value="revenue">Revenue</option>
+                                <option value="cash_flow">Cash Flow</option>
+                                <option value="created_at">Recently Added</option>
+                                <option value="roi_percentage">ROI Percentage</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="resultsPerPage">Results Per Page</label>
+                            <select id="resultsPerPage" name="resultsPerPage">
+                                <option value="25">25 results</option>
+                                <option value="50">50 results</option>
+                                <option value="100">100 results</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Search Actions -->
+        <div class="search-actions">
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <button type="button" class="btn btn-primary" onclick="performSearch()">
+                    🔍 Search Businesses
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="clearSearch()">
+                    🗑️ Clear All
+                </button>
+                <button type="button" class="btn btn-success" onclick="saveSearch()" id="saveSearchBtn" style="display: none;">
+                    💾 Save Search
+                </button>
+            </div>
+            <div id="searchSummary" style="color: #6b7280; font-size: 0.875rem;"></div>
+        </div>
+
+        <!-- Search Results -->
+        <div id="searchResults" class="empty-state">
+            <div style="font-size: 3rem; margin-bottom: 15px;">🔍</div>
+            <h3 style="margin-bottom: 10px;">Ready to Search</h3>
+            <p>Use the filters above to find businesses that match your investment criteria.</p>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBcUfOEiZtGqf5Gx9VBMTPF0mO4U0CQ-jI",
+            authDomain: "cashflow-finder-v2.firebaseapp.com",
+            projectId: "cashflow-finder-v2",
+            storageBucket: "cashflow-finder-v2.appspot.com",
+            messagingSenderId: "1049067161601",
+            appId: "1:1049067161601:web:5ea046a4ae26c516285800"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        window.firebaseAuth = auth;
+        window.onAuthStateChanged = onAuthStateChanged;
+    </script>
+
+    <script>
+        let currentUser = null;
+        let searchResults = [];
+        let savedSearches = [];
+
+        // Check authentication
+        function checkAuth() {
+            window.onAuthStateChanged(window.firebaseAuth, async (user) => {
+                if (user) {
+                    currentUser = {
+                        id: user.uid,
+                        email: user.email,
+                        name: user.displayName || user.email,
+                        subscription_tier: user.email === 'meredith@monkeyattack.com' ? 'enterprise' : 'starter',
+                        email_verified: user.emailVerified
+                    };
+                    updateUIForUser();
+                    loadSavedSearches();
+                } else {
+                    window.location.href = '/';
+                }
+            });
+        }
+
+        // Update UI based on user state
+        function updateUIForUser() {
+            document.getElementById('userName').textContent = currentUser.name || currentUser.email;
+            document.getElementById('userTier').textContent = currentUser.subscription_tier.toUpperCase();
+            document.getElementById('userTier').className = `user-tier tier-${currentUser.subscription_tier}`;
+            
+            if (currentUser.avatar_url) {
+                document.getElementById('userAvatar').src = currentUser.avatar_url;
+            }
+
+            // Show enterprise features for enterprise users
+            if (currentUser.subscription_tier === 'enterprise') {
+                document.getElementById('premiumBanner').style.display = 'block';
+                document.getElementById('enterpriseFilters').style.display = 'block';
+            }
+
+            // Show saved searches for premium users
+            if (currentUser.subscription_tier !== 'starter') {
+                document.getElementById('savedSearches').style.display = 'block';
+            }
+        }
+
+        // Perform search
+        async function performSearch() {
+            const formData = new FormData(document.getElementById('advancedSearchForm'));
+            const searchParams = new URLSearchParams();
+
+            // Basic parameters
+            for (let [key, value] of formData.entries()) {
+                if (value && key !== 'features') {
+                    searchParams.append(key, value);
+                }
+            }
+
+            // Handle checkbox features
+            const features = formData.getAll('features');
+            if (features.length > 0) {
+                searchParams.append('features', features.join(','));
+            }
+
+            try {
+                document.getElementById('searchResults').innerHTML = `
+                    <div class="loading">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">⏳</div>
+                        <h3>Searching businesses...</h3>
+                    </div>
+                `;
+
+                const token = await window.firebaseAuth.currentUser.getIdToken();
+                const response = await fetch('/api/business/search?' + searchParams.toString(), {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    searchResults = data.data.listings || [];
+                    displaySearchResults(data.data);
+                    updateSearchSummary(searchResults.length);
+                    document.getElementById('saveSearchBtn').style.display = 'inline-flex';
+                } else {
+                    showError('Search failed. Please try again.');
+                }
+            } catch (error) {
+                showError('Error performing search: ' + error.message);
+            }
+        }
+
+        // Display search results
+        function displaySearchResults(data) {
+            const { listings, total_count, has_more } = data;
+            
+            if (!listings || listings.length === 0) {
+                document.getElementById('searchResults').innerHTML = `
+                    <div class="empty-state">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">😔</div>
+                        <h3 style="margin-bottom: 10px;">No businesses found</h3>
+                        <p>Try adjusting your search criteria to find more results.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const resultsHtml = `
+                <div class="results-container">
+                    <div class="results-header">
+                        <h3>Search Results (${listings.length} of ${total_count})</h3>
+                        <div style="display: flex; gap: 10px;">
+                            ${currentUser.subscription_tier !== 'starter' ? `
+                                <button class="btn btn-secondary" onclick="exportResults()">📊 Export</button>
+                            ` : ''}
+                            ${has_more ? `
+                                <button class="btn btn-primary" onclick="loadMoreResults()">Load More</button>
+                            ` : ''}
+                        </div>
+                    </div>
+                    <div class="results-body">
+                        <div class="business-list">
+                            ${listings.map(business => `
+                                <div class="business-row" onclick="viewBusinessDetail('${business.id}')">
+                                    <div>
+                                        <div class="business-name">${business.name}</div>
+                                        <div class="business-location">📍 ${business.location.city}, ${business.location.state}</div>
+                                    </div>
+                                    <div class="business-industry">${business.industry}</div>
+                                    <div class="business-price">
+                                        ${business.financial_data.asking_price ? 
+                                            `$${business.financial_data.asking_price.toLocaleString()}` : 
+                                            business.financial_data.price_range || 'Contact for price'
+                                        }
+                                    </div>
+                                    <div class="business-quality">
+                                        <span class="quality-score">${business.quality_score}/10</span>
+                                    </div>
+                                    <div>
+                                        ${business.roi_analysis && currentUser.subscription_tier !== 'starter' ? 
+                                            `<div style="font-size: 0.875rem; color: #059669;">ROI: ${business.roi_analysis.roi_percentage}%</div>` : ''
+                                        }
+                                    </div>
+                                    <div style="color: #2563eb; font-weight: 500;">→</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('searchResults').innerHTML = resultsHtml;
+        }
+
+        // Navigate to business detail
+        function viewBusinessDetail(businessId) {
+            window.location.href = '/business/' + businessId;
+        }
+
+        // Update search summary
+        function updateSearchSummary(count) {
+            document.getElementById('searchSummary').textContent = 
+                count > 0 ? `Found ${count} businesses matching your criteria` : '';
+        }
+
+        // Clear search form
+        function clearSearch() {
+            document.getElementById('advancedSearchForm').reset();
+            document.getElementById('searchResults').innerHTML = `
+                <div class="empty-state">
+                    <div style="font-size: 3rem; margin-bottom: 15px;">🔍</div>
+                    <h3 style="margin-bottom: 10px;">Ready to Search</h3>
+                    <p>Use the filters above to find businesses that match your investment criteria.</p>
+                </div>
+            `;
+            document.getElementById('searchSummary').textContent = '';
+            document.getElementById('saveSearchBtn').style.display = 'none';
+        }
+
+        // Save search
+        function saveSearch() {
+            const searchName = prompt('Enter a name for this saved search:');
+            if (searchName) {
+                const formData = new FormData(document.getElementById('advancedSearchForm'));
+                const criteria = {};
+                for (let [key, value] of formData.entries()) {
+                    if (value) criteria[key] = value;
+                }
+                
+                const savedSearch = {
+                    id: Date.now().toString(),
+                    name: searchName,
+                    criteria: criteria,
+                    created_at: new Date().toISOString()
+                };
+                
+                // For now, store in localStorage (would be database in production)
+                savedSearches.push(savedSearch);
+                localStorage.setItem('savedSearches', JSON.stringify(savedSearches));
+                
+                alert('Search saved successfully!');
+                loadSavedSearches();
+            }
+        }
+
+        // Load saved searches
+        function loadSavedSearches() {
+            const saved = localStorage.getItem('savedSearches');
+            if (saved) {
+                savedSearches = JSON.parse(saved);
+                displaySavedSearches();
+            }
+        }
+
+        // Display saved searches
+        function displaySavedSearches() {
+            if (savedSearches.length === 0) return;
+
+            const savedSearchHtml = savedSearches.map(search => `
+                <div class="saved-search-item">
+                    <div class="saved-search-info">
+                        <div class="saved-search-name">${search.name}</div>
+                        <div class="saved-search-criteria">
+                            ${Object.entries(search.criteria).slice(0, 3).map(([key, value]) => 
+                                `${key}: ${value}`
+                            ).join(' • ')}
+                        </div>
+                    </div>
+                    <div class="saved-search-actions">
+                        <button class="btn btn-primary" onclick="loadSavedSearch('${search.id}')">Load</button>
+                        <button class="btn btn-secondary" onclick="deleteSavedSearch('${search.id}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('savedSearchList').innerHTML = savedSearchHtml;
+        }
+
+        // Load saved search
+        function loadSavedSearch(searchId) {
+            const search = savedSearches.find(s => s.id === searchId);
+            if (search) {
+                const form = document.getElementById('advancedSearchForm');
+                Object.entries(search.criteria).forEach(([key, value]) => {
+                    const field = form.querySelector(`[name="${key}"]`);
+                    if (field) {
+                        if (field.type === 'checkbox') {
+                            field.checked = true;
+                        } else {
+                            field.value = value;
+                        }
+                    }
+                });
+                performSearch();
+            }
+        }
+
+        // Delete saved search
+        function deleteSavedSearch(searchId) {
+            if (confirm('Are you sure you want to delete this saved search?')) {
+                savedSearches = savedSearches.filter(s => s.id !== searchId);
+                localStorage.setItem('savedSearches', JSON.stringify(savedSearches));
+                displaySavedSearches();
+            }
+        }
+
+        // Export results
+        function exportResults() {
+            if (currentUser.subscription_tier === 'starter') {
+                alert('Export feature is available for Professional and Enterprise users.');
+                return;
+            }
+            alert('Export feature coming soon!');
+        }
+
+        // Show error
+        function showError(message) {
+            document.getElementById('searchResults').innerHTML = `
+                <div class="empty-state" style="background: #fef2f2; color: #dc2626;">
+                    <div style="font-size: 3rem; margin-bottom: 15px;">❌</div>
+                    <h3 style="margin-bottom: 10px;">Search Error</h3>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            checkAuth();
+        });
+    </script>
+</body>
+</html>
