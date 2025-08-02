@@ -82,9 +82,8 @@ router.get('/search', auth_1.optionalAuth, async (req, res) => {
         const client = await index_1.pool.connect();
         let searchQuery = `
       SELECT b.*, 
-             COALESCE(array_agg(s.source) FILTER (WHERE s.source IS NOT NULL), '{}') as data_sources
+             ARRAY[b.source] as data_sources
       FROM businesses b
-      LEFT JOIN business_sources s ON b.id = s.business_id
       WHERE 1=1
     `;
         const queryParams = [];
