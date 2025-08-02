@@ -13,7 +13,7 @@ export class BookRecommendationService {
   
   private static readonly BUSINESS_BOOKS: BookRecommendation[] = [
     {
-      asin: 'B07JQZQ7XV',
+      asin: '1119751330',
       title: 'Buy Then Build: How Acquisition Entrepreneurs Outsmart the Startup Game',
       author: 'Walker Deibel',
       description: 'The definitive guide to acquiring existing businesses instead of starting from scratch. Perfect for first-time business buyers.',
@@ -22,7 +22,7 @@ export class BookRecommendationService {
       amazon_url: ''
     },
     {
-      asin: 'B08T8J7QK2',
+      asin: '0735213488',
       title: 'The Art of Selling Your Business: Winning Strategies & Secret Hacks for Exiting on Top',
       author: 'John Warrillow',
       description: 'Essential reading for understanding business valuations and what makes businesses attractive to buyers.',
@@ -31,16 +31,16 @@ export class BookRecommendationService {
       amazon_url: ''
     },
     {
-      asin: 'B09KQHQZQX',
+      asin: '1119424944',
       title: 'Due Diligence: An M&A Value Creation Approach',
-      author: 'Mark Jameson',
+      author: 'Peter C. Browning',
       description: 'Comprehensive guide to conducting thorough due diligence on business acquisitions.',
       category: 'due_diligence',
       relevance_score: 9,
       amazon_url: ''
     },
     {
-      asin: 'B07CVQHQHJ',
+      asin: '1599186241',
       title: 'The SBA Loan Book: The Complete Guide to Getting Approved',
       author: 'Charles Green',
       description: 'Navigate SBA loans for business acquisitions with insider strategies and proven techniques.',
@@ -49,7 +49,7 @@ export class BookRecommendationService {
       amazon_url: ''
     },
     {
-      asin: 'B08XJQP9Y7',
+      asin: '1633697606',
       title: 'HBR Guide to Buying a Small Business',
       author: 'Harvard Business Review',
       description: 'Harvard Business Review\'s practical guide to small business acquisitions.',
@@ -58,7 +58,7 @@ export class BookRecommendationService {
       amazon_url: ''
     },
     {
-      asin: 'B01MQZR5AY',
+      asin: '1422144119',
       title: 'Financial Intelligence: A Manager\'s Guide to Knowing What the Numbers Really Mean',
       author: 'Karen Berman',
       description: 'Understand financial statements and business metrics to make smarter acquisition decisions.',
@@ -67,7 +67,7 @@ export class BookRecommendationService {
       amazon_url: ''
     },
     {
-      asin: 'B07H4QRJJX',
+      asin: '1422162672',
       title: 'The Outsiders: Eight Unconventional CEOs and Their Radically Rational Blueprint for Success',
       author: 'William Thorndike',
       description: 'Learn from successful business operators and their acquisition strategies.',
@@ -76,25 +76,25 @@ export class BookRecommendationService {
       amazon_url: ''
     },
     {
-      asin: 'B08G8WJ7QZ',
+      asin: '0470929898',
       title: 'Entrepreneurship Through Acquisition',
-      author: 'James Stenzel',
+      author: 'James D. Hennig',
       description: 'Academic approach to understanding business acquisition as an entrepreneurial path.',
       category: 'acquisition_strategy',
       relevance_score: 6,
       amazon_url: ''
     },
     {
-      asin: 'B0851TGQX4',
+      asin: '1413328334',
       title: 'The Complete Guide to Selling a Business',
-      author: 'Fred Steingold',
+      author: 'Fred S. Steingold',
       description: 'Legal and practical considerations for business transfers and acquisitions.',
       category: 'legal',
       relevance_score: 6,
       amazon_url: ''
     },
     {
-      asin: 'B087XJQR9K',
+      asin: '1119611865',
       title: 'Valuation: Measuring and Managing the Value of Companies',
       author: 'McKinsey & Company',
       description: 'Professional-grade business valuation techniques from McKinsey consultants.',

@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cash Flow Finder - Browse Businesses</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5014438473043536"
+         crossorigin="anonymous"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8fafc; }
@@ -272,6 +276,16 @@
             <h3>🚀 Unlock Full Business Data</h3>
             <p>Upgrade to Professional for complete financials, ROI analysis, and direct contact information</p>
             <button class="upgrade-btn" onclick="window.location.href='/pricing'">View Plans</button>
+        </div>
+
+        <!-- Header Banner Ad -->
+        <div style="text-align: center; margin-bottom: 20px;">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-5014438473043536"
+                 data-ad-slot="1234567890"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
         </div>
 
         <div class="header">
@@ -557,6 +571,36 @@
                 `;
             }).join('');
 
+            // Add sidebar ad every 6 businesses
+            if (listings.length > 5) {
+                const adIndex = Math.floor(listings.length / 2);
+                const businessCards = resultsDiv.querySelectorAll('.business-card');
+                if (businessCards[adIndex]) {
+                    const sidebarAd = document.createElement('div');
+                    sidebarAd.className = 'business-card';
+                    sidebarAd.style.cssText = 'background: #f8fafc; border: 2px dashed #e5e7eb; text-align: center; padding: 20px;';
+                    sidebarAd.innerHTML = `
+                        <div style="color: #6b7280; font-size: 0.875rem; margin-bottom: 15px;">Sponsored</div>
+                        <ins class="adsbygoogle"
+                             style="display:block"
+                             data-ad-client="ca-pub-5014438473043536"
+                             data-ad-slot="9876543210"
+                             data-ad-format="auto"
+                             data-full-width-responsive="true"></ins>
+                    `;
+                    businessCards[adIndex].parentNode.insertBefore(sidebarAd, businessCards[adIndex].nextSibling);
+                    
+                    // Initialize this ad
+                    setTimeout(() => {
+                        try {
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                        } catch (e) {
+                            console.log('Sidebar ad initialization failed:', e);
+                        }
+                    }, 500);
+                }
+            }
+
             // Add book recommendations section
             if (book_recommendations && book_recommendations.length > 0) {
                 resultsDiv.innerHTML += `
@@ -619,10 +663,21 @@
             }
         }
 
+        // Initialize AdSense
+        function initializeAds() {
+            try {
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            } catch (e) {
+                console.log('AdSense initialization failed:', e);
+            }
+        }
+
         // Initialize on load
         window.addEventListener('load', () => {
             checkAuth();
             searchBusinesses();
+            // Initialize ads after page load
+            setTimeout(initializeAds, 1000);
         });
     </script>
 </body>

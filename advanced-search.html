@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advanced Search - Cash Flow Finder</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5014438473043536"
+         crossorigin="anonymous"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8fafc; }
@@ -605,6 +609,17 @@
             <div id="searchSummary" style="color: #6b7280; font-size: 0.875rem;"></div>
         </div>
 
+        <!-- Search Results Ad -->
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div style="color: #6b7280; font-size: 0.875rem; margin-bottom: 10px;">Sponsored</div>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-5014438473043536"
+                 data-ad-slot="2222222222"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+        </div>
+
         <!-- Search Results -->
         <div id="searchResults" class="empty-state">
             <div style="font-size: 3rem; margin-bottom: 15px;">🔍</div>
@@ -918,9 +933,20 @@
             `;
         }
 
+        // Initialize AdSense
+        function initializeAds() {
+            try {
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            } catch (e) {
+                console.log('AdSense initialization failed:', e);
+            }
+        }
+
         // Initialize
         window.addEventListener('load', () => {
             checkAuth();
+            // Initialize ads after page load
+            setTimeout(initializeAds, 1000);
         });
     </script>
 </body>
