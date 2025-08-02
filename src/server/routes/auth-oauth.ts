@@ -87,68 +87,6 @@ router.post('/google/callback', async (req, res) => {
   }
 });
 
-// LinkedIn OAuth callback
-router.post('/linkedin/callback', async (req, res) => {
-  try {
-    const { code } = req.body;
-    
-    // Exchange code for access token
-    const tokenResponse = await axios.post('https://www.linkedin.com/oauth/v2/accessToken', {
-      grant_type: 'authorization_code',
-      code,
-      client_id: process.env.LINKEDIN_CLIENT_ID,
-      client_secret: process.env.LINKEDIN_CLIENT_SECRET,
-      redirect_uri: process.env.LINKEDIN_REDIRECT_URI
-    }, {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-    });
-
-    const { access_token } = tokenResponse.data;
-
-    // Get user profile
-    const profileResponse = await axios.get('https://api.linkedin.com/v2/people/~?projection=(id,localizedFirstName,localizedLastName,profilePicture(displayImage~:playableStreams))', {
-      headers: { Authorization: `Bearer ${access_token}` }
-    });
-
-    // Get user email
-    const emailResponse = await axios.get('https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))', {
-      headers: { Authorization: `Bearer ${access_token}` }
-    });
-
-    const linkedinUser: LinkedInUserInfo = {
-      id: profileResponse.data.id,
-      email: emailResponse.data.elements[0]['handle~'].emailAddress,
-      localizedFirstName: profileResponse.data.localizedFirstName,
-      localizedLastName: profileResponse.data.localizedLastName,
-      profilePicture: profileResponse.data.profilePicture
-    };
-
-    const user = await findOrCreateUser('linkedin', linkedinUser);
-    const token = generateJWT(user.id);
-
-    res.json({
-      success: true,
-      data: {
-        user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          avatar_url: user.avatar_url,
-          subscription_tier: user.subscription_tier,
-          email_verified: user.email_verified
-        },
-        token
-      }
-    });
-  } catch (error) {
-    console.error('LinkedIn OAuth error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: { message: 'LinkedIn authentication failed' } 
-    });
-  }
-});
-
 async function findOrCreateUser(provider: 'google' | 'linkedin', oauthUser: GoogleUserInfo | LinkedInUserInfo) {
   const client = await pool.connect();
   
@@ -174,16 +112,12 @@ async function findOrCreateUser(provider: 'google' | 'linkedin', oauthUser: Goog
       name = `${linkedinUser.localizedFirstName} ${linkedinUser.localizedLastName}`;
       providerId = linkedinUser.id;
       avatarUrl = linkedinUser.profilePicture?.['displayImage~']?.elements?.[0]?.identifiers?.[0]?.identifier || '';
-      emailVerified = true; // LinkedIn emails are always verified
+      emailVerified = true;
     }
 
-    // Check if user exists by provider ID
-    const providerColumn = provider === 'google' ? 'google_id' : 'linkedin_id';
-    let existingUserResult = await client.query(
-      `SELECT * FROM users WHERE ${providerColumn} = $1`,
-      [providerId]
-    );
-
+    // Check if user exists by email
+    let existingUserResult = await client.query('SELECT * FROM users WHERE email = $1', [email]);
+    
     let user;
     if (existingUserResult.rows.length > 0) {
       // Update existing user
@@ -193,51 +127,23 @@ async function findOrCreateUser(provider: 'google' | 'linkedin', oauthUser: Goog
          name = $1, 
          avatar_url = $2, 
          email_verified = $3 
-         WHERE ${providerColumn} = $4`,
-        [name, avatarUrl, emailVerified, providerId]
+         WHERE email = $4`,
+        [name, avatarUrl, emailVerified, email]
       );
     } else {
-      // Check if user exists by email
-      existingUserResult = await client.query('SELECT * FROM users WHERE email = $1', [email]);
+      // Create new user - check if it's meredith@monkeyattack.com for premium access
+      const isOwner = email === 'meredith@monkeyattack.com';
+      const subscriptionTier = isOwner ? 'enterprise' : 'starter';
       
-      if (existingUserResult.rows.length > 0) {
-        // Link OAuth account to existing user
-        user = existingUserResult.rows[0];
-        await client.query(
-          `UPDATE users SET 
-           ${providerColumn} = $1,
-           name = $2,
-           avatar_url = $3,
-           email_verified = $4
-           WHERE email = $5`,
-          [providerId, name, avatarUrl, emailVerified, email]
-        );
-      } else {
-        // Create new user - check if it's meredith@monkeyattack.com for premium access
-        const isOwner = email === 'meredith@monkeyattack.com';
-        const subscriptionTier = isOwner ? 'enterprise' : 'starter';
-        
-        const userId = uuidv4();
-        const insertResult = await client.query(
-          `INSERT INTO users (
-            id, email, name, avatar_url, email_verified, 
-            ${providerColumn}, subscription_tier, 
-            monthly_searches_used, monthly_exports_used
-          ) VALUES ($1, $2, $3, $4, $5, $6, $7, 0, 0) RETURNING *`,
-          [userId, email, name, avatarUrl, emailVerified, providerId, subscriptionTier]
-        );
-        user = insertResult.rows[0];
-
-        // If it's the owner, mark as paid subscription
-        if (isOwner) {
-          await client.query(
-            `INSERT INTO subscriptions (
-              id, organization_id, status, current_period_start, current_period_end
-            ) VALUES ($1, $2, 'active', NOW(), NOW() + INTERVAL '1 year')`,
-            [uuidv4(), userId, userId] // Using user_id as org_id for individual users
-          );
-        }
-      }
+      const userId = uuidv4();
+      const insertResult = await client.query(
+        `INSERT INTO users (
+          id, email, name, avatar_url, email_verified, 
+          subscription_tier, monthly_searches_used, monthly_exports_used
+        ) VALUES ($1, $2, $3, $4, $5, $6, 0, 0) RETURNING *`,
+        [userId, email, name, avatarUrl, emailVerified, subscriptionTier]
+      );
+      user = insertResult.rows[0];
     }
 
     await client.query('COMMIT');
@@ -257,26 +163,5 @@ function generateJWT(userId: string): string {
     { expiresIn: '7d' }
   );
 }
-
-// Get OAuth URLs for frontend
-router.get('/google/url', (req, res) => {
-  const authUrl = googleClient.generateAuthUrl({
-    access_type: 'offline',
-    scope: ['openid', 'profile', 'email'],
-    prompt: 'consent'
-  });
-  
-  res.json({ success: true, data: { authUrl } });
-});
-
-router.get('/linkedin/url', (req, res) => {
-  const authUrl = `https://www.linkedin.com/oauth/v2/authorization?` +
-    `response_type=code&` +
-    `client_id=${process.env.LINKEDIN_CLIENT_ID}&` +
-    `redirect_uri=${encodeURIComponent(process.env.LINKEDIN_REDIRECT_URI!)}&` +
-    `scope=r_liteprofile%20r_emailaddress`;
-  
-  res.json({ success: true, data: { authUrl } });
-});
 
 export default router;
