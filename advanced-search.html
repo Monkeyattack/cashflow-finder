@@ -610,12 +610,12 @@
         </div>
 
         <!-- Search Results Ad -->
-        <div style="text-align: center; margin-bottom: 20px;">
-            <div style="color: #6b7280; font-size: 0.875rem; margin-bottom: 10px;">Sponsored</div>
-            <ins class="adsbygoogle"
+        <div id="searchAd" style="text-align: center; margin-bottom: 20px; display: none;">
+            <div style="color: #6b7280; font-size: 0.875rem; margin-bottom: 10px;">Advertisement</div>
+            <ins class="adsbygoogle search-banner-ad"
                  style="display:block"
                  data-ad-client="ca-pub-5014438473043536"
-                 data-ad-slot="2222222222"
+                 data-ad-slot="YOUR_SEARCH_AD_SLOT_ID"
                  data-ad-format="auto"
                  data-full-width-responsive="true"></ins>
         </div>
@@ -935,10 +935,23 @@
 
         // Initialize AdSense
         function initializeAds() {
-            try {
-                (adsbygoogle = window.adsbygoogle || []).push({});
-            } catch (e) {
-                console.log('AdSense initialization failed:', e);
+            // Only show ads if AdSense is approved - replace YOUR_*_SLOT_ID with real IDs
+            const adsEnabled = false; // Set to true when you have real ad slot IDs
+            
+            if (adsEnabled) {
+                document.getElementById('searchAd').style.display = 'block';
+                
+                // Initialize all ads
+                try {
+                    const ads = document.querySelectorAll('.adsbygoogle');
+                    ads.forEach(ad => {
+                        if (!ad.getAttribute('data-adsbygoogle-status')) {
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                        }
+                    });
+                } catch (e) {
+                    console.log('AdSense initialization failed:', e);
+                }
             }
         }
 

@@ -279,11 +279,12 @@
         </div>
 
         <!-- Header Banner Ad -->
-        <div style="text-align: center; margin-bottom: 20px;">
-            <ins class="adsbygoogle"
+        <div id="headerAd" style="text-align: center; margin-bottom: 20px; display: none;">
+            <div style="color: #6b7280; font-size: 0.75rem; margin-bottom: 5px;">Advertisement</div>
+            <ins class="adsbygoogle header-banner-ad"
                  style="display:block"
                  data-ad-client="ca-pub-5014438473043536"
-                 data-ad-slot="1234567890"
+                 data-ad-slot="YOUR_HEADER_AD_SLOT_ID"
                  data-ad-format="auto"
                  data-full-width-responsive="true"></ins>
         </div>
@@ -581,10 +582,10 @@
                     sidebarAd.style.cssText = 'background: #f8fafc; border: 2px dashed #e5e7eb; text-align: center; padding: 20px;';
                     sidebarAd.innerHTML = `
                         <div style="color: #6b7280; font-size: 0.875rem; margin-bottom: 15px;">Sponsored</div>
-                        <ins class="adsbygoogle"
+                        <ins class="adsbygoogle sidebar-ad"
                              style="display:block"
                              data-ad-client="ca-pub-5014438473043536"
-                             data-ad-slot="9876543210"
+                             data-ad-slot="YOUR_SIDEBAR_AD_SLOT_ID"
                              data-ad-format="auto"
                              data-full-width-responsive="true"></ins>
                     `;
@@ -665,10 +666,23 @@
 
         // Initialize AdSense
         function initializeAds() {
-            try {
-                (adsbygoogle = window.adsbygoogle || []).push({});
-            } catch (e) {
-                console.log('AdSense initialization failed:', e);
+            // Only show ads if AdSense is approved - replace YOUR_*_SLOT_ID with real IDs
+            const adsEnabled = false; // Set to true when you have real ad slot IDs
+            
+            if (adsEnabled) {
+                document.getElementById('headerAd').style.display = 'block';
+                
+                // Initialize all ads
+                try {
+                    const ads = document.querySelectorAll('.adsbygoogle');
+                    ads.forEach(ad => {
+                        if (!ad.getAttribute('data-adsbygoogle-status')) {
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                        }
+                    });
+                } catch (e) {
+                    console.log('AdSense initialization failed:', e);
+                }
             }
         }
 

@@ -557,12 +557,12 @@
                         </div>
 
                         <!-- Strategic Ad Placement -->
-                        <div class="content-section" style="background: #f8fafc; border: 2px dashed #e5e7eb; text-align: center;">
-                            <div style="color: #6b7280; font-size: 0.875rem; margin-bottom: 15px;">Sponsored</div>
-                            <ins class="adsbygoogle"
+                        <div id="midContentAd" class="content-section" style="background: #f8fafc; border: 2px dashed #e5e7eb; text-align: center; display: none;">
+                            <div style="color: #6b7280; font-size: 0.875rem; margin-bottom: 15px;">Advertisement</div>
+                            <ins class="adsbygoogle mid-content-ad"
                                  style="display:block"
                                  data-ad-client="ca-pub-5014438473043536"
-                                 data-ad-slot="1111111111"
+                                 data-ad-slot="YOUR_MID_CONTENT_AD_SLOT_ID"
                                  data-ad-format="auto"
                                  data-full-width-responsive="true"></ins>
                         </div>
@@ -838,10 +838,23 @@
 
         // Initialize AdSense
         function initializeAds() {
-            try {
-                (adsbygoogle = window.adsbygoogle || []).push({});
-            } catch (e) {
-                console.log('AdSense initialization failed:', e);
+            // Only show ads if AdSense is approved - replace YOUR_*_SLOT_ID with real IDs
+            const adsEnabled = false; // Set to true when you have real ad slot IDs
+            
+            if (adsEnabled) {
+                document.getElementById('midContentAd').style.display = 'block';
+                
+                // Initialize all ads
+                try {
+                    const ads = document.querySelectorAll('.adsbygoogle');
+                    ads.forEach(ad => {
+                        if (!ad.getAttribute('data-adsbygoogle-status')) {
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                        }
+                    });
+                } catch (e) {
+                    console.log('AdSense initialization failed:', e);
+                }
             }
         }
 
