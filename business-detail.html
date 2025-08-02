@@ -406,7 +406,7 @@
                 
                 if (response.ok) {
                     const data = await response.json();
-                    businessData = data.data;
+                    businessData = data.data.business;
                     renderBusinessDetail();
                 } else {
                     showError('Failed to load business details.');
@@ -439,7 +439,7 @@
                     <div class="business-meta">
                         <div class="meta-item">
                             <span>📍</span>
-                            <span>${business.location.city}, ${business.location.state}</span>
+                            <span>${business.location?.city || 'Unknown'}, ${business.location?.state || 'Unknown'}</span>
                         </div>
                         <div class="meta-item">
                             <span>🏢</span>
@@ -447,7 +447,7 @@
                         </div>
                         <div class="meta-item">
                             <span>📅</span>
-                            <span>Established ${business.financial_data.established_year || 'N/A'}</span>
+                            <span>Established ${business.financial_data?.established_year || 'N/A'}</span>
                         </div>
                         <div class="meta-item">
                             <span>🔗</span>
@@ -464,16 +464,16 @@
                             <h2 class="section-title">💰 Financial Overview</h2>
                             <div class="financial-grid">
                                 <div class="financial-item">
-                                    <div class="financial-value">$${(business.financial_data.asking_price || 0).toLocaleString()}</div>
+                                    <div class="financial-value">$${(business.financial_data?.asking_price || 0).toLocaleString()}</div>
                                     <div class="financial-label">Asking Price</div>
                                 </div>
-                                ${isProfessional && business.financial_data.annual_revenue ? `
+                                ${isProfessional && business.financial_data?.annual_revenue ? `
                                 <div class="financial-item">
                                     <div class="financial-value">$${business.financial_data.annual_revenue.toLocaleString()}</div>
                                     <div class="financial-label">Annual Revenue</div>
                                 </div>
                                 ` : ''}
-                                ${isProfessional && business.financial_data.cash_flow ? `
+                                ${isProfessional && business.financial_data?.cash_flow ? `
                                 <div class="financial-item">
                                     <div class="financial-value">$${business.financial_data.cash_flow.toLocaleString()}</div>
                                     <div class="financial-label">Cash Flow</div>
@@ -542,7 +542,7 @@
                         <div class="content-section">
                             <h2 class="section-title">📍 Location Analysis <span class="premium-badge">ENTERPRISE</span></h2>
                             <div class="location-stats">
-                                <h3>${business.location.city}, ${business.location.state} Demographics</h3>
+                                <h3>${business.location?.city || 'Unknown'}, ${business.location?.state || 'Unknown'} Demographics</h3>
                                 <div class="demo-grid">
                                     <div class="demo-item">
                                         <span>Population:</span>
@@ -579,7 +579,7 @@
                                 <div class="calc-inputs">
                                     <div class="input-group">
                                         <label>Purchase Price:</label>
-                                        <input type="number" id="purchasePrice" value="${business.financial_data.asking_price || 0}">
+                                        <input type="number" id="purchasePrice" value="${business.financial_data?.asking_price || 0}">
                                     </div>
                                     <div class="input-group">
                                         <label>Down Payment (%):</label>
