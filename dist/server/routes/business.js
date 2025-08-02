@@ -8,6 +8,7 @@ const express_1 = require("express");
 const businessService_1 = require("../services/businessService");
 const tier_access_1 = __importDefault(require("../services/tier-access"));
 const book_recommendations_1 = __importDefault(require("../services/book-recommendations"));
+const market_data_1 = __importDefault(require("../services/market-data"));
 const auth_1 = require("../middleware/auth");
 const zod_1 = require("zod");
 const index_1 = require("../database/index");
@@ -270,6 +271,13 @@ router.get('/:id', auth_1.optionalAuth, async (req, res) => {
                 }
             ];
         }
+        // Get real market data for enterprise users
+        let industryData = null;
+        let locationData = null;
+        if (userTier === 'enterprise') {
+            industryData = market_data_1.default.getIndustryData(business.industry);
+            locationData = await market_data_1.default.getLocationData(business.location?.city || 'Unknown', business.location?.state || 'Unknown');
+        }
         res.json({
             success: true,
             data: {
@@ -281,6 +289,10 @@ router.get('/:id', auth_1.optionalAuth, async (req, res) => {
                     due_diligence_services: dueDiligenceRecommendations,
                     analysis_tools: analysisRecommendations
                 },
+                market_data: userTier === 'enterprise' ? {
+                    industry: industryData,
+                    location: locationData
+                } : null,
                 upgrade_prompt: userTier === 'starter' ? {
                     message: "Unlock full financial data, contact information, and professional analysis tools",
                     cta: "Upgrade to Professional",

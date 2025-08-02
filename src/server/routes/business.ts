@@ -3,6 +3,7 @@ import { businessService } from '../services/businessService';
 import { subscriptionService } from '../services/subscriptionService';
 import TierAccessService from '../services/tier-access';
 import BookRecommendationService from '../services/book-recommendations';
+import MarketDataService from '../services/market-data';
 import { 
   authenticateUser, 
   checkFeatureAccess, 
@@ -313,6 +314,18 @@ router.get('/:id', optionalAuth, async (req, res) => {
       ];
     }
 
+    // Get real market data for enterprise users
+    let industryData = null;
+    let locationData = null;
+    
+    if (userTier === 'enterprise') {
+      industryData = MarketDataService.getIndustryData(business.industry);
+      locationData = await MarketDataService.getLocationData(
+        business.location?.city || 'Unknown',
+        business.location?.state || 'Unknown'
+      );
+    }
+
     res.json({
       success: true,
       data: {
@@ -324,6 +337,10 @@ router.get('/:id', optionalAuth, async (req, res) => {
           due_diligence_services: dueDiligenceRecommendations,
           analysis_tools: analysisRecommendations
         },
+        market_data: userTier === 'enterprise' ? {
+          industry: industryData,
+          location: locationData
+        } : null,
         upgrade_prompt: userTier === 'starter' ? {
           message: "Unlock full financial data, contact information, and professional analysis tools",
           cta: "Upgrade to Professional",

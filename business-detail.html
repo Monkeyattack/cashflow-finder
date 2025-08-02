@@ -494,6 +494,7 @@
         function renderBusinessDetail() {
             const business = businessData.business || businessData;
             const recommendations = businessData.recommendations || {};
+            const marketData = businessData.market_data || null;
             const isEnterprise = currentUser.subscription_tier === 'enterprise';
             const isProfessional = currentUser.subscription_tier === 'professional' || isEnterprise;
 
@@ -589,61 +590,84 @@
                         ` : ''}
 
                         <!-- Industry Analysis -->
-                        ${isEnterprise ? `
+                        ${isEnterprise && marketData?.industry ? `
                         <div class="content-section">
                             <h2 class="section-title">🏭 Industry Analysis <span class="premium-badge">ENTERPRISE</span></h2>
                             <div class="industry-stats">
-                                <h3>${business.industry} Market Overview</h3>
+                                <h3>${marketData.industry.industry} Market Overview</h3>
                                 <div class="stat-grid">
                                     <div class="stat-item">
-                                        <div class="stat-value">$2.4B</div>
+                                        <div class="stat-value">${marketData.industry.market_size}</div>
                                         <div class="stat-label">Market Size</div>
                                     </div>
                                     <div class="stat-item">
-                                        <div class="stat-value">+3.2%</div>
+                                        <div class="stat-value">${marketData.industry.annual_growth}</div>
                                         <div class="stat-label">Annual Growth</div>
                                     </div>
                                     <div class="stat-item">
-                                        <div class="stat-value">847</div>
-                                        <div class="stat-label">Avg. Businesses</div>
+                                        <div class="stat-value">${marketData.industry.avg_businesses.toLocaleString()}</div>
+                                        <div class="stat-label">US Businesses</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-value">${marketData.industry.avg_profit_margin}%</div>
+                                        <div class="stat-label">Avg Profit Margin</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-value">${marketData.industry.competition_level}</div>
+                                        <div class="stat-label">Competition</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-value">$${(marketData.industry.avg_revenue/1000).toFixed(0)}K</div>
+                                        <div class="stat-label">Avg Revenue</div>
                                     </div>
                                 </div>
                                 <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.9;">
-                                    The ${business.industry.toLowerCase()} sector shows strong fundamentals with consistent demand patterns. 
-                                    Competition is moderate with opportunities for differentiation through service quality and customer experience.
+                                    ${marketData.industry.market_outlook}
                                 </p>
+                                <div style="margin-top: 15px;">
+                                    <strong>Key Trends:</strong> ${marketData.industry.key_trends.join(', ')}
+                                </div>
+                                <div style="margin-top: 10px; font-size: 0.8rem; opacity: 0.7;">
+                                    Source: ${marketData.industry.data_source} • Updated: ${marketData.industry.last_updated}
+                                </div>
                             </div>
                         </div>
                         ` : ''}
 
                         <!-- Location Demographics -->
-                        ${isEnterprise ? `
+                        ${isEnterprise && marketData?.location ? `
                         <div class="content-section">
                             <h2 class="section-title">📍 Location Analysis <span class="premium-badge">ENTERPRISE</span></h2>
                             <div class="location-stats">
-                                <h3>${business.location?.city || 'Unknown'}, ${business.location?.state || 'Unknown'} Demographics</h3>
+                                <h3>${marketData.location.city}, ${marketData.location.state} Demographics</h3>
                                 <div class="demo-grid">
                                     <div class="demo-item">
                                         <span>Population:</span>
-                                        <strong>127,843</strong>
+                                        <strong>${marketData.location.population.toLocaleString()}</strong>
                                     </div>
                                     <div class="demo-item">
                                         <span>Median Income:</span>
-                                        <strong>$68,920</strong>
+                                        <strong>$${marketData.location.median_income.toLocaleString()}</strong>
                                     </div>
                                     <div class="demo-item">
                                         <span>Unemployment:</span>
-                                        <strong>3.8%</strong>
+                                        <strong>${marketData.location.unemployment_rate}%</strong>
                                     </div>
                                     <div class="demo-item">
                                         <span>Business Growth:</span>
-                                        <strong>+2.1%</strong>
+                                        <strong>+${marketData.location.business_growth_rate}%</strong>
+                                    </div>
+                                    <div class="demo-item">
+                                        <span>Cost of Living:</span>
+                                        <strong>${marketData.location.cost_of_living_index} index</strong>
                                     </div>
                                 </div>
                                 <p style="margin-top: 15px; font-size: 0.9rem; color: #374151;">
-                                    Strong local economy with growing population and stable employment. 
-                                    Demographic profile aligns well with target customer base for ${business.industry.toLowerCase()} businesses.
+                                    ${marketData.location.market_characteristics}
                                 </p>
+                                <div style="margin-top: 10px; font-size: 0.8rem; opacity: 0.7;">
+                                    Source: ${marketData.location.data_source} • Updated: ${marketData.location.last_updated}
+                                </div>
                             </div>
                         </div>
                         ` : ''}
