@@ -1,10 +1,16 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.businessRoutes = void 0;
 const express_1 = require("express");
 const businessService_1 = require("../services/businessService");
+const tier_access_1 = __importDefault(require("../services/tier-access"));
+const book_recommendations_1 = __importDefault(require("../services/book-recommendations"));
 const auth_1 = require("../middleware/auth");
 const zod_1 = require("zod");
+const index_1 = require("../database/index");
 const router = (0, express_1.Router)();
 exports.businessRoutes = router;
 // Validation schemas
@@ -32,9 +38,25 @@ const searchSchema = zod_1.z.object({
 const watchlistSchema = zod_1.z.object({
     notes: zod_1.z.string().optional()
 });
-// GET /api/business/search
-router.get('/search', auth_1.optionalAuth, (0, auth_1.checkFeatureAccess)('searches'), (0, auth_1.recordUsage)('search'), async (req, res) => {
+// GET /api/business/search - Tier-based search with usage tracking
+router.get('/search', auth_1.optionalAuth, async (req, res) => {
     try {
+        const userId = req.authContext?.userId;
+        const userTier = req.authContext?.subscriptionTier || 'starter';
+        // Check tier access and usage limits
+        if (userId) {
+            const accessCheck = await tier_access_1.default.checkUserAccess(userId, 'search');
+            if (!accessCheck.allowed) {
+                return res.status(429).json({
+                    success: false,
+                    error: {
+                        code: 'SEARCH_LIMIT_EXCEEDED',
+                        message: `Monthly search limit reached for ${accessCheck.tier} tier`,
+                        usage: accessCheck.usage
+                    }
+                });
+            }
+        }
         const query = searchSchema.parse({
             keywords: req.query.keywords,
             industry: req.query.industry ? (Array.isArray(req.query.industry) ? req.query.industry : [req.query.industry]) : undefined,
@@ -56,27 +78,103 @@ router.get('/search', auth_1.optionalAuth, (0, auth_1.checkFeatureAccess)('searc
             limit: req.query.limit ? parseInt(req.query.limit) : undefined,
             offset: req.query.offset ? parseInt(req.query.offset) : undefined
         });
-        const results = await businessService_1.businessService.search(query, req.authContext?.organizationId);
-        // Apply tier-based filtering for unauthenticated or limited tier users
-        if (!req.authContext || req.authContext.subscriptionTier === 'starter') {
-            results.listings = results.listings.map(listing => ({
-                ...listing,
-                contact_info: {}, // Hide contact info for starter tier
+        // Execute search
+        const client = await index_1.pool.connect();
+        let searchQuery = `
+      SELECT b.*, 
+             COALESCE(array_agg(s.source) FILTER (WHERE s.source IS NOT NULL), '{}') as data_sources
+      FROM businesses b
+      LEFT JOIN business_sources s ON b.id = s.business_id
+      WHERE 1=1
+    `;
+        const queryParams = [];
+        let paramCount = 0;
+        // Apply search filters
+        if (query.keywords) {
+            paramCount++;
+            searchQuery += ` AND (b.name ILIKE $${paramCount} OR b.description ILIKE $${paramCount})`;
+            queryParams.push(`%${query.keywords}%`);
+        }
+        if (query.industry && query.industry.length > 0) {
+            paramCount++;
+            searchQuery += ` AND b.industry = ANY($${paramCount})`;
+            queryParams.push(query.industry);
+        }
+        if (query.location?.city) {
+            paramCount++;
+            searchQuery += ` AND b.location->>'city' ILIKE $${paramCount}`;
+            queryParams.push(`%${query.location.city}%`);
+        }
+        if (query.location?.state) {
+            paramCount++;
+            searchQuery += ` AND b.location->>'state' = $${paramCount}`;
+            queryParams.push(query.location.state);
+        }
+        if (query.financial_filters?.min_price) {
+            paramCount++;
+            searchQuery += ` AND (b.financial_data->>'asking_price')::numeric >= $${paramCount}`;
+            queryParams.push(query.financial_filters.min_price);
+        }
+        if (query.financial_filters?.max_price) {
+            paramCount++;
+            searchQuery += ` AND (b.financial_data->>'asking_price')::numeric <= $${paramCount}`;
+            queryParams.push(query.financial_filters.max_price);
+        }
+        searchQuery += ` GROUP BY b.id`;
+        // Apply sorting
+        const sortBy = query.sort_by || 'created_at';
+        const sortOrder = query.sort_order || 'desc';
+        searchQuery += ` ORDER BY b.${sortBy} ${sortOrder}`;
+        // Apply pagination
+        const limit = Math.min(query.limit || 20, userTier === 'starter' ? 10 : 50);
+        const offset = query.offset || 0;
+        paramCount++;
+        searchQuery += ` LIMIT $${paramCount}`;
+        queryParams.push(limit);
+        paramCount++;
+        searchQuery += ` OFFSET $${paramCount}`;
+        queryParams.push(offset);
+        const result = await client.query(searchQuery, queryParams);
+        client.release();
+        // Filter data based on user tier
+        const filteredBusinesses = userId
+            ? await tier_access_1.default.filterBusinessDataByTier(userId, result.rows)
+            : result.rows.map(business => ({
+                id: business.id,
+                name: business.name,
+                industry: business.industry,
+                location: business.location,
                 financial_data: {
-                    asking_price: listing.financial_data.asking_price,
-                    // Hide detailed financials for starter tier
-                }
+                    asking_price: business.financial_data?.asking_price,
+                    price_range: getPriceRange(business.financial_data?.asking_price || 0)
+                },
+                quality_score: business.quality_score,
+                created_at: business.created_at,
+                tier_access_level: 'starter'
             }));
-            results.tier_limited = true;
+        // Get book recommendations based on search results
+        const bookRecommendations = query.industry && query.industry.length > 0
+            ? book_recommendations_1.default.getRecommendationsByIndustry(query.industry[0], userTier)
+            : book_recommendations_1.default.getRecommendationsByBusinessStage('research', userTier);
+        // Increment usage if authenticated
+        if (userId) {
+            await tier_access_1.default.incrementUsage(userId, 'search');
         }
         res.json({
             success: true,
-            data: results,
+            data: {
+                listings: filteredBusinesses,
+                total_count: result.rowCount,
+                has_more: result.rowCount === limit,
+                tier_limited: userTier === 'starter',
+                book_recommendations: bookRecommendations,
+                affiliate_disclaimer: "Cash Flow Finder may earn commission from affiliate partners"
+            },
             pagination: {
-                total: results.total_count,
-                limit: query.limit || 20,
-                offset: query.offset || 0,
-                has_more: results.has_more
+                total: result.rowCount,
+                limit,
+                offset,
+                has_more: result.rowCount === limit
             }
         });
     }
@@ -91,11 +189,30 @@ router.get('/search', auth_1.optionalAuth, (0, auth_1.checkFeatureAccess)('searc
         });
     }
 });
-// GET /api/business/:id
+function getPriceRange(price) {
+    if (price < 50000)
+        return 'Under $50K';
+    if (price < 100000)
+        return '$50K - $100K';
+    if (price < 250000)
+        return '$100K - $250K';
+    if (price < 500000)
+        return '$250K - $500K';
+    if (price < 1000000)
+        return '$500K - $1M';
+    return 'Over $1M';
+}
+// GET /api/business/:id - Business details with affiliate recommendations
 router.get('/:id', auth_1.optionalAuth, async (req, res) => {
     try {
-        const business = await businessService_1.businessService.getById(req.params.id, req.authContext?.organizationId);
-        if (!business) {
+        const userId = req.authContext?.userId;
+        const userTier = req.authContext?.subscriptionTier || 'starter';
+        const businessId = req.params.id;
+        // Get business from database
+        const client = await index_1.pool.connect();
+        const result = await client.query('SELECT * FROM businesses WHERE id = $1', [businessId]);
+        client.release();
+        if (result.rows.length === 0) {
             return res.status(404).json({
                 success: false,
                 error: {
@@ -104,17 +221,80 @@ router.get('/:id', auth_1.optionalAuth, async (req, res) => {
                 }
             });
         }
-        // Apply tier-based data filtering
-        if (!req.authContext || req.authContext.subscriptionTier === 'starter') {
-            business.contact_info = {}; // Hide contact info
-            business.financial_data = {
-                asking_price: business.financial_data.asking_price,
-                // Hide detailed financials
+        const business = result.rows[0];
+        // Filter data based on user tier
+        const filteredBusiness = userId
+            ? (await tier_access_1.default.filterBusinessDataByTier(userId, [business]))[0]
+            : {
+                id: business.id,
+                name: business.name,
+                industry: business.industry,
+                location: business.location,
+                financial_data: {
+                    asking_price: business.financial_data?.asking_price,
+                    price_range: getPriceRange(business.financial_data?.asking_price || 0)
+                },
+                quality_score: business.quality_score,
+                description: business.description,
+                created_at: business.created_at,
+                tier_access_level: 'starter'
             };
+        // Get tier-appropriate recommendations
+        const bookRecommendations = business.industry
+            ? book_recommendations_1.default.getRecommendationsByIndustry(business.industry, userTier)
+            : book_recommendations_1.default.getRecommendationsByFinancialData(business.financial_data, userTier);
+        // Get affiliate partner recommendations based on business stage
+        const serviceRecommendations = userId ? await tier_access_1.default.getAffiliateRecommendations(userId, businessId, 'financing') : [];
+        const legalRecommendations = userId ? await tier_access_1.default.getAffiliateRecommendations(userId, businessId, 'legal') : [];
+        const dueDiligenceRecommendations = userId ? await tier_access_1.default.getAffiliateRecommendations(userId, businessId, 'due_diligence') : [];
+        // Business analysis recommendations for premium tiers
+        let analysisRecommendations = [];
+        if (userTier === 'professional' || userTier === 'enterprise') {
+            analysisRecommendations = [
+                {
+                    title: 'ROI Analysis',
+                    description: 'Get detailed ROI projections and financial analysis',
+                    available: !!filteredBusiness.roi_analysis,
+                    tier_required: 'professional'
+                },
+                {
+                    title: 'SBA Loan Qualification',
+                    description: 'Check SBA loan eligibility and qualification requirements',
+                    available: !!filteredBusiness.sba_qualification,
+                    tier_required: 'professional'
+                },
+                {
+                    title: 'Due Diligence Report',
+                    description: 'Comprehensive risk assessment and business evaluation',
+                    available: !!filteredBusiness.due_diligence_report,
+                    tier_required: 'professional'
+                }
+            ];
         }
         res.json({
             success: true,
-            data: business
+            data: {
+                business: filteredBusiness,
+                recommendations: {
+                    books: bookRecommendations,
+                    financing_services: serviceRecommendations,
+                    legal_services: legalRecommendations,
+                    due_diligence_services: dueDiligenceRecommendations,
+                    analysis_tools: analysisRecommendations
+                },
+                upgrade_prompt: userTier === 'starter' ? {
+                    message: "Unlock full financial data, contact information, and professional analysis tools",
+                    cta: "Upgrade to Professional",
+                    benefits: [
+                        "Complete financial statements",
+                        "Direct contact information",
+                        "ROI analysis and projections",
+                        "SBA loan qualification assessment",
+                        "Professional due diligence reports"
+                    ]
+                } : null,
+                affiliate_disclaimer: "Cash Flow Finder may earn commission from affiliate partners"
+            }
         });
     }
     catch (error) {

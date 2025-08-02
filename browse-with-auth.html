@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cash Flow Finder - Browse Businesses</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8fafc; }
+        
+        /* Header with Auth */
+        .header-bar {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2563eb;
+        }
+        .logo img { height: 40px; }
+        
+        /* Auth Section */
+        .auth-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .auth-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .login-btn {
+            background: white;
+            color: #2563eb;
+            border: 1px solid #2563eb;
+        }
+        .login-btn:hover {
+            background: #2563eb;
+            color: white;
+        }
+        .signup-btn {
+            background: #2563eb;
+            color: white;
+        }
+        .signup-btn:hover {
+            background: #1d4ed8;
+        }
+        .user-info {
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e5e7eb;
+        }
+        .user-tier {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+        .tier-starter { background: #fee2e2; color: #dc2626; }
+        .tier-professional { background: #dbeafe; color: #2563eb; }
+        .tier-enterprise { background: #d1fae5; color: #059669; }
+        
+        /* Main Content */
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .header { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .header h1 { color: #2563eb; font-size: 2.5rem; margin-bottom: 10px; }
+        
+        /* Tier Upgrade Banner */
+        .upgrade-banner {
+            display: none;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .upgrade-banner h3 { margin-bottom: 10px; }
+        .upgrade-btn {
+            background: white;
+            color: #2563eb;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        /* Business Cards */
+        .businesses { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; }
+        .business-card { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .premium-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #fbbf24;
+            color: #78350f;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        /* Book Recommendations */
+        .book-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+        .book-title { font-weight: 600; margin-bottom: 10px; color: #374151; }
+        .book-list {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .book-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            background: #fef3c7;
+            color: #78350f;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            transition: background 0.2s;
+        }
+        .book-link:hover {
+            background: #fde68a;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        .modal h2 { margin-bottom: 20px; color: #1f2937; }
+        .oauth-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .oauth-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .oauth-btn:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+        }
+        .google-btn { color: #ea4335; }
+        .linkedin-btn { color: #0077b5; }
+        .close-modal {
+            margin-top: 20px;
+            color: #6b7280;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Bar with Auth -->
+    <div class="header-bar">
+        <div class="header-content">
+            <div class="logo">
+                <img src="/favicon.svg" alt="Cash Flow Finder">
+                <span>Cash Flow Finder</span>
+            </div>
+            <div class="auth-section">
+                <div id="authButtons">
+                    <button class="auth-btn login-btn" onclick="showAuthModal('login')">Log In</button>
+                    <button class="auth-btn signup-btn" onclick="showAuthModal('signup')">Sign Up</button>
+                </div>
+                <div id="userInfo" class="user-info">
+                    <img id="userAvatar" class="user-avatar" src="" alt="User">
+                    <div>
+                        <div id="userName" style="font-weight: 500;"></div>
+                        <span id="userTier" class="user-tier"></span>
+                    </div>
+                    <button class="auth-btn login-btn" onclick="logout()">Log Out</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Upgrade Banner for Starter Users -->
+        <div id="upgradeBanner" class="upgrade-banner">
+            <h3>🚀 Unlock Full Business Data</h3>
+            <p>Upgrade to Professional for complete financials, ROI analysis, and direct contact information</p>
+            <button class="upgrade-btn" onclick="window.location.href='/pricing'">View Plans</button>
+        </div>
+
+        <div class="header">
+            <h1>Browse Business Opportunities</h1>
+            <p>Discover profitable businesses for sale with AI-powered insights</p>
+        </div>
+
+        <div id="results" class="businesses">
+            <div class="loading">Loading businesses...</div>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h2 id="modalTitle">Welcome to Cash Flow Finder</h2>
+            <p id="modalSubtitle">Sign in to access premium features</p>
+            
+            <div class="oauth-buttons">
+                <button class="oauth-btn google-btn" onclick="signInWithGoogle()">
+                    <svg width="20" height="20" viewBox="0 0 20 20">
+                        <path fill="#4285F4" d="M19.6 10.23c0-.82-.1-1.42-.25-2.05H10v3.72h5.5c-.15.96-.74 2.31-2.04 3.22v2.45h3.16c1.89-1.73 2.98-4.3 2.98-7.34z"/>
+                        <path fill="#34A853" d="M13.46 15.13c-.83.59-1.96 1-3.46 1-2.64 0-4.88-1.74-5.68-4.15H1.07v2.52C2.72 17.75 6.09 20 10 20c2.7 0 4.96-.89 6.62-2.42l-3.16-2.45z"/>
+                        <path fill="#FBBC05" d="M3.99 10c0-.69.12-1.35.32-1.97V5.51H1.07A9.973 9.973 0 000 10c0 1.61.39 3.14 1.07 4.49l3.24-2.52c-.2-.62-.32-1.28-.32-1.97z"/>
+                        <path fill="#EA4335" d="M10 3.88c1.88 0 3.13.81 3.85 1.48l2.84-2.76C14.96.99 12.7 0 10 0 6.09 0 2.72 2.25 1.07 5.51l3.24 2.52C5.12 5.62 7.36 3.88 10 3.88z"/>
+                    </svg>
+                    Continue with Google
+                </button>
+                <button class="oauth-btn linkedin-btn" onclick="signInWithLinkedIn()">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="#0077b5">
+                        <path d="M18.5 0h-17C.7 0 0 .6 0 1.4v17.1c0 .9.7 1.5 1.5 1.5h17c.8 0 1.5-.6 1.5-1.4V1.4c0-.8-.7-1.4-1.5-1.4zM6 17H3V8h3v9zM4.5 6.3c-1 0-1.7-.8-1.7-1.8s.8-1.8 1.8-1.8 1.8.8 1.8 1.8c-.1 1-.9 1.8-1.9 1.8zM17 17h-3v-4.4c0-1.1 0-2.5-1.5-2.5s-1.8 1.2-1.8 2.5V17h-3V8h2.8v1.3h.1c.4-.7 1.3-1.5 2.7-1.5 2.9 0 3.4 1.9 3.4 4.4V17z"/>
+                    </svg>
+                    Continue with LinkedIn
+                </button>
+            </div>
+            
+            <div class="close-modal" onclick="closeModal()">Close</div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let businessData = [];
+
+        // Check authentication status
+        async function checkAuth() {
+            const token = localStorage.getItem('authToken');
+            if (token) {
+                try {
+                    const response = await fetch('/api/auth/me', {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        currentUser = data.data.user;
+                        updateUIForUser();
+                    } else {
+                        localStorage.removeItem('authToken');
+                    }
+                } catch (error) {
+                    console.error('Auth check failed:', error);
+                }
+            }
+        }
+
+        // Update UI based on user state
+        function updateUIForUser() {
+            const authButtons = document.getElementById('authButtons');
+            const userInfo = document.getElementById('userInfo');
+            const upgradeBanner = document.getElementById('upgradeBanner');
+            
+            if (currentUser) {
+                authButtons.style.display = 'none';
+                userInfo.style.display = 'flex';
+                
+                document.getElementById('userName').textContent = currentUser.name || currentUser.email;
+                document.getElementById('userTier').textContent = currentUser.subscription_tier.toUpperCase();
+                document.getElementById('userTier').className = `user-tier tier-${currentUser.subscription_tier}`;
+                
+                if (currentUser.avatar_url) {
+                    document.getElementById('userAvatar').src = currentUser.avatar_url;
+                }
+                
+                // Show upgrade banner for starter users
+                if (currentUser.subscription_tier === 'starter') {
+                    upgradeBanner.style.display = 'block';
+                }
+            } else {
+                authButtons.style.display = 'flex';
+                userInfo.style.display = 'none';
+                upgradeBanner.style.display = 'none';
+            }
+        }
+
+        // Show auth modal
+        function showAuthModal(type) {
+            const modal = document.getElementById('authModal');
+            const title = document.getElementById('modalTitle');
+            const subtitle = document.getElementById('modalSubtitle');
+            
+            if (type === 'signup') {
+                title.textContent = 'Join Cash Flow Finder';
+                subtitle.textContent = 'Create your account to start finding businesses';
+            } else {
+                title.textContent = 'Welcome Back';
+                subtitle.textContent = 'Sign in to access your saved searches';
+            }
+            
+            modal.style.display = 'flex';
+        }
+
+        // Close modal
+        function closeModal(event) {
+            if (!event || event.target.id === 'authModal') {
+                document.getElementById('authModal').style.display = 'none';
+            }
+        }
+
+        // OAuth sign in
+        async function signInWithGoogle() {
+            // In production, this would use Firebase Auth or direct OAuth
+            // For now, we'll use the backend OAuth endpoint
+            window.location.href = '/api/auth/oauth/google/url';
+        }
+
+        async function signInWithLinkedIn() {
+            window.location.href = '/api/auth/oauth/linkedin/url';
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('authToken');
+            currentUser = null;
+            updateUIForUser();
+            searchBusinesses(); // Refresh to show limited data
+        }
+
+        // Search businesses
+        async function searchBusinesses() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div class="loading">Loading businesses...</div>';
+
+            try {
+                const headers = {};
+                const token = localStorage.getItem('authToken');
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+
+                const response = await fetch('/api/business/search?limit=20', { headers });
+                const data = await response.json();
+
+                if (data.success) {
+                    businessData = data.data.listings;
+                    displayBusinesses(data.data);
+                } else {
+                    resultsDiv.innerHTML = `<div class="error">Error: ${data.error.message}</div>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">Failed to load businesses: ${error.message}</div>`;
+            }
+        }
+
+        // Display businesses with tier-based data
+        function displayBusinesses(data) {
+            const resultsDiv = document.getElementById('results');
+            const { listings, book_recommendations, tier_limited } = data;
+
+            if (!listings || listings.length === 0) {
+                resultsDiv.innerHTML = '<p>No businesses found.</p>';
+                return;
+            }
+
+            resultsDiv.innerHTML = listings.map(business => {
+                const isPremiumData = business.roi_analysis || business.sba_qualification;
+                const showFullData = currentUser && currentUser.subscription_tier !== 'starter';
+
+                return `
+                    <div class="business-card">
+                        ${isPremiumData && !showFullData ? '<div class="premium-badge">PREMIUM DATA</div>' : ''}
+                        <h3>${business.name}</h3>
+                        <div class="business-info">
+                            <span>📍 ${business.location.city}, ${business.location.state}</span>
+                            <span>🏢 ${business.industry}</span>
+                            ${showFullData && business.financial_data.asking_price ? 
+                                `<span>💰 $${business.financial_data.asking_price.toLocaleString()}</span>` : 
+                                `<span>💰 ${business.financial_data.price_range || 'Contact for price'}</span>`
+                            }
+                            ${showFullData && business.financial_data.annual_revenue ? 
+                                `<span>📈 Revenue: $${business.financial_data.annual_revenue.toLocaleString()}/yr</span>` : ''
+                            }
+                            ${showFullData && business.financial_data.cash_flow ? 
+                                `<span>💵 Cash Flow: $${business.financial_data.cash_flow.toLocaleString()}/yr</span>` : ''
+                            }
+                            <span>⭐ Quality: ${business.quality_score}/10</span>
+                        </div>
+                        ${showFullData && business.roi_analysis ? `
+                            <div style="margin-top: 10px; padding: 10px; background: #f3f4f6; border-radius: 4px;">
+                                <strong>ROI Analysis:</strong><br>
+                                Payback: ${business.roi_analysis.payback_period_months} months | 
+                                ROI: ${business.roi_analysis.roi_percentage}% | 
+                                Risk: ${business.roi_analysis.risk_level}
+                            </div>
+                        ` : ''}
+                        ${!showFullData && isPremiumData ? `
+                            <div style="margin-top: 10px; padding: 10px; background: #fef3c7; border-radius: 4px;">
+                                <strong>🔒 Premium Analysis Available</strong><br>
+                                <small>Upgrade to see ROI projections, SBA qualification, and full financials</small>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            // Add book recommendations section
+            if (book_recommendations && book_recommendations.length > 0) {
+                resultsDiv.innerHTML += `
+                    <div class="business-card" style="grid-column: 1 / -1;">
+                        <div class="book-section">
+                            <div class="book-title">📚 Recommended Business Acquisition Books</div>
+                            <div class="book-list">
+                                ${book_recommendations.map(book => `
+                                    <a href="${book.amazon_url}" target="_blank" rel="noopener" class="book-link">
+                                        📖 ${book.title}
+                                    </a>
+                                `).join('')}
+                            </div>
+                            <small style="color: #6b7280; margin-top: 10px; display: block;">
+                                Cash Flow Finder may earn commission from affiliate partners
+                            </small>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            checkAuth();
+            searchBusinesses();
+        });
+    </script>
+</body>
+</html>
