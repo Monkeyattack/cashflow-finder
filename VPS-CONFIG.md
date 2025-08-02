@@ -34,4 +34,16 @@
 4. Build server: `npm run build:server`
 5. Restart PM2: `pm2 restart cashflow-finder`
 
+## PM2 Configuration
+- **Environment Variables**: Use `ecosystem.config.js` with explicit env vars to avoid SASL errors
+- **Restart Command**: `pm2 delete cashflow-finder && pm2 start ecosystem.config.js`
+- **Auto-Start**: PM2 startup and save configured for boot persistence
+- **Logs**: `/var/log/cashflow-finder-*.log`
+
+### Common SASL Error Fix:
+If you see "SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string":
+1. Check that `ecosystem.config.js` has explicit DATABASE_* environment variables
+2. Restart PM2: `pm2 delete cashflow-finder && pm2 start ecosystem.config.js`
+3. Verify env vars: `pm2 env [process_id]`
+
 ## Critical: Always configure nginx for HTTP-only backend with Cloudflare proxy frontend
