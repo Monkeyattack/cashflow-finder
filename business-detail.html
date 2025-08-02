@@ -290,6 +290,69 @@
             color: white;
         }
 
+        /* Book Recommendations */
+        .book-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #f59e0b;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+        .book-item:hover {
+            box-shadow: 0 4px 8px rgba(245, 158, 11, 0.2);
+            transform: translateY(-1px);
+        }
+        .book-cover {
+            width: 60px;
+            height: 80px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        .book-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .book-title {
+            font-weight: 600;
+            color: #92400e;
+            font-size: 0.9rem;
+            line-height: 1.3;
+            margin-bottom: 4px;
+        }
+        .book-author {
+            color: #78350f;
+            font-size: 0.8rem;
+            margin-bottom: 6px;
+        }
+        .book-description {
+            color: #a16207;
+            font-size: 0.75rem;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .book-relevance {
+            background: #059669;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            align-self: flex-start;
+            margin-left: auto;
+        }
+
         /* Loading States */
         .loading {
             text-align: center;
@@ -425,7 +488,8 @@
 
         // Render business detail page
         function renderBusinessDetail() {
-            const business = businessData;
+            const business = businessData.business || businessData;
+            const recommendations = businessData.recommendations || {};
             const isEnterprise = currentUser.subscription_tier === 'enterprise';
             const isProfessional = currentUser.subscription_tier === 'professional' || isEnterprise;
 
@@ -615,33 +679,86 @@
                             </div>
                         </div>
 
-                        <!-- Affiliate Services -->
+                        <!-- Recommended Reading -->
                         <div class="affiliate-section">
-                            <h3 style="margin-bottom: 10px; color: #92400e;">🤝 Recommended Services</h3>
+                            <h3 style="margin-bottom: 10px; color: #92400e;">📚 Essential Business Acquisition Books</h3>
                             <p style="font-size: 0.875rem; color: #78350f; margin-bottom: 15px;">
-                                Professional services to help with your business acquisition:
+                                Expert-recommended books for successful business acquisition:
                             </p>
-                            <div class="affiliate-links">
-                                <a href="https://www.legalzoom.com/business?utm_source=cashflowfinder" target="_blank" class="affiliate-link">
-                                    ⚖️ Legal Services
-                                </a>
-                                <a href="https://www.fundera.com/business-loans/sba-loans?utm_source=cashflowfinder" target="_blank" class="affiliate-link">
-                                    💰 SBA Financing
-                                </a>
-                                <a href="https://www.bizplan.com/?utm_source=cashflowfinder" target="_blank" class="affiliate-link">
-                                    📋 Due Diligence
-                                </a>
-                                <a href="https://www.score.org/?utm_source=cashflowfinder" target="_blank" class="affiliate-link">
-                                    👨‍💼 Business Mentoring
-                                </a>
+                            <div id="bookRecommendations" style="display: grid; gap: 12px;">
+                                <!-- Books will be populated here -->
                             </div>
-                            <p style="font-size: 0.75rem; color: #78350f; margin-top: 10px; text-align: center;">
+                            
+                            <!-- Professional Services -->
+                            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #f59e0b;">
+                                <h4 style="margin-bottom: 15px; color: #92400e;">🤝 Professional Services</h4>
+                                <div class="affiliate-links">
+                                    <a href="https://www.legalzoom.com/business?utm_source=cashflowfinder" target="_blank" class="affiliate-link">
+                                        ⚖️ Legal Services
+                                    </a>
+                                    <a href="https://www.fundera.com/business-loans/sba-loans?utm_source=cashflowfinder" target="_blank" class="affiliate-link">
+                                        💰 SBA Financing
+                                    </a>
+                                    <a href="https://www.bizplan.com/?utm_source=cashflowfinder" target="_blank" class="affiliate-link">
+                                        📋 Due Diligence
+                                    </a>
+                                    <a href="https://www.score.org/?utm_source=cashflowfinder" target="_blank" class="affiliate-link">
+                                        👨‍💼 Business Mentoring
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <p style="font-size: 0.75rem; color: #78350f; margin-top: 15px; text-align: center;">
                                 Cash Flow Finder earns commission from affiliate partners
                             </p>
                         </div>
                     </div>
                 </div>
             `;
+            
+            // Populate book recommendations
+            populateBookRecommendations(recommendations.books || []);
+        }
+
+        // Populate book recommendations
+        function populateBookRecommendations(books) {
+            const container = document.getElementById('bookRecommendations');
+            if (!books || books.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: #78350f;">
+                        📚 Loading personalized book recommendations...
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = books.map(book => `
+                <a href="${book.amazon_url}" target="_blank" class="book-item" onclick="trackBookClick('${book.asin}')">
+                    <div class="book-cover">📖</div>
+                    <div class="book-info">
+                        <div class="book-title">${book.title}</div>
+                        <div class="book-author">by ${book.author}</div>
+                        <div class="book-description">${book.description}</div>
+                    </div>
+                    <div class="book-relevance">${book.relevance_score}/10</div>
+                </a>
+            `).join('');
+        }
+
+        // Track book clicks for analytics
+        function trackBookClick(asin) {
+            try {
+                fetch('/api/analytics/book-click', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    },
+                    body: JSON.stringify({ asin, business_id: getBusinessId() })
+                });
+            } catch (error) {
+                console.log('Analytics tracking failed:', error);
+            }
         }
 
         // SBA Loan Calculator
