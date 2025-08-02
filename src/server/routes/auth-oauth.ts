@@ -13,6 +13,34 @@ const googleClient = new OAuth2Client(
   process.env.GOOGLE_REDIRECT_URI
 );
 
+// Get Google OAuth URL
+router.get('/google/url', (req, res) => {
+  const scopes = ['email', 'profile'];
+  const authUrl = googleClient.generateAuthUrl({
+    access_type: 'offline',
+    scope: scopes,
+  });
+  
+  res.json({
+    success: true,
+    data: { url: authUrl }
+  });
+});
+
+// Get LinkedIn OAuth URL  
+router.get('/linkedin/url', (req, res) => {
+  const clientId = process.env.LINKEDIN_CLIENT_ID;
+  const redirectUri = process.env.LINKEDIN_REDIRECT_URI;
+  const scope = 'r_liteprofile r_emailaddress';
+  
+  const authUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri!)}&scope=${encodeURIComponent(scope)}`;
+  
+  res.json({
+    success: true,
+    data: { url: authUrl }
+  });
+});
+
 interface GoogleUserInfo {
   id: string;
   email: string;

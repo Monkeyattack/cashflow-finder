@@ -289,29 +289,83 @@
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBcUfOEiZtGqf5Gx9VBMTPF0mO4U0CQ-jI",
+            authDomain: "cashflow-finder-v2.firebaseapp.com",
+            projectId: "cashflow-finder-v2",
+            storageBucket: "cashflow-finder-v2.appspot.com",
+            messagingSenderId: "1049067161601",
+            appId: "1:1049067161601:web:5ea046a4ae26c516285800"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        
+        // Make auth available globally
+        window.firebaseAuth = auth;
+        window.signInWithPopup = signInWithPopup;
+        window.GoogleAuthProvider = GoogleAuthProvider;
+        window.signOut = signOut;
+        window.onAuthStateChanged = onAuthStateChanged;
+    </script>
+
     <script>
         let currentUser = null;
         let businessData = [];
 
-        // Check authentication status
-        async function checkAuth() {
-            const token = localStorage.getItem('authToken');
-            if (token) {
-                try {
-                    const response = await fetch('/api/auth/me', {
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    if (response.ok) {
-                        const data = await response.json();
-                        currentUser = data.data.user;
-                        updateUIForUser();
-                    } else {
-                        localStorage.removeItem('authToken');
+        // Check authentication status with Firebase
+        function checkAuth() {
+            window.onAuthStateChanged(window.firebaseAuth, async (user) => {
+                if (user) {
+                    // User is signed in
+                    const token = await user.getIdToken();
+                    localStorage.setItem('authToken', token);
+                    
+                    // Set current user with Firebase data
+                    currentUser = {
+                        id: user.uid,
+                        email: user.email,
+                        name: user.displayName || user.email,
+                        avatar_url: user.photoURL,
+                        subscription_tier: user.email === 'meredith@monkeyattack.com' ? 'enterprise' : 'starter',
+                        email_verified: user.emailVerified
+                    };
+                    
+                    // Sync with backend if needed
+                    try {
+                        await fetch('/api/auth/firebase-sync', {
+                            method: 'POST',
+                            headers: { 
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                uid: user.uid,
+                                email: user.email,
+                                name: user.displayName || user.email,
+                                avatar_url: user.photoURL,
+                                email_verified: user.emailVerified
+                            })
+                        });
+                    } catch (error) {
+                        console.log('Backend sync optional:', error);
                     }
-                } catch (error) {
-                    console.error('Auth check failed:', error);
+                    
+                    updateUIForUser();
+                } else {
+                    // User is signed out
+                    localStorage.removeItem('authToken');
+                    currentUser = null;
+                    updateUIForUser();
                 }
-            }
+            });
         }
 
         // Update UI based on user state
@@ -367,23 +421,34 @@
             }
         }
 
-        // OAuth sign in
+        // Firebase OAuth sign in
         async function signInWithGoogle() {
-            // In production, this would use Firebase Auth or direct OAuth
-            // For now, we'll use the backend OAuth endpoint
-            window.location.href = '/api/auth/oauth/google/url';
+            try {
+                const provider = new window.GoogleAuthProvider();
+                const result = await window.signInWithPopup(window.firebaseAuth, provider);
+                // Firebase auth state change will handle the rest
+                closeModal();
+            } catch (error) {
+                console.error('Google sign in error:', error);
+                alert('Sign in failed. Please try again.');
+            }
         }
 
         async function signInWithLinkedIn() {
-            window.location.href = '/api/auth/oauth/linkedin/url';
+            // LinkedIn OAuth would need additional setup in Firebase
+            // For now, show message
+            alert('LinkedIn sign-in coming soon! Please use Google for now.');
         }
 
         // Logout
-        function logout() {
-            localStorage.removeItem('authToken');
-            currentUser = null;
-            updateUIForUser();
-            searchBusinesses(); // Refresh to show limited data
+        async function logout() {
+            try {
+                await window.signOut(window.firebaseAuth);
+                // Firebase auth state change will handle cleanup
+                searchBusinesses(); // Refresh to show limited data
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
         }
 
         // Search businesses
