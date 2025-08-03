@@ -173,6 +173,16 @@
             margin-right: auto;
         }
         
+        .brand-assets-link {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .brand-assets-link:hover {
+            text-decoration: underline;
+        }
         
         /* Filters Section */
         .filters-section {
@@ -311,6 +321,30 @@
             overflow: hidden;
         }
         
+        .price-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Filter Menu Styles */
+        .filter-option {
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        .filter-option:hover {
+            background: #f3f4f6;
+        }
         
         .business-content {
             padding: 20px;
@@ -695,37 +729,43 @@
             const loadingState = document.getElementById('loadingState');
             
             try {
-                // Fetch real businesses from API
-                const response = await fetch('/api/real-business/search?limit=50');
+                // Fetch real businesses from API (non-Craigslist only)
+                const response = await fetch('/api/real-business/search?limit=20');
                 
                 if (response.ok) {
                     const data = await response.json();
                     if (data.success && data.data.listings.length > 0) {
                         loadingState.style.display = 'none';
-                        // Transform API data to match our format
-                        const businesses = data.data.listings.map(b => ({
-                            id: b.id,
-                            name: b.name,
-                            description: b.description,
-                            industry: b.industry,
-                            location: b.location,
-                            price: b.financial_data?.asking_price || 0,
-                            image: getBusinessImage(b.industry),
-                            metrics: {
-                                revenue_multiple: getRevenueMultiple(b.financial_data),
-                                established: `Est. ${b.financial_data?.established_year || new Date(b.created_at).getFullYear()}`
-                            },
-                            financial_data: b.financial_data
-                        }));
-                        allBusinesses = businesses; // Store for search/filter
-                        renderBusinessCards(businesses);
-                        document.getElementById('resultsCount').textContent = `${businesses.length} businesses`;
-                        document.getElementById('showingResults').textContent = `Showing ${businesses.length} results`;
-                        return;
+                        // Filter out Craigslist listings and transform API data to match our format
+                        const realBusinesses = data.data.listings
+                            .filter(b => b.source !== 'Craigslist')
+                            .slice(0, 6)
+                            .map((b, index) => ({
+                                id: b.id,
+                                name: b.name,
+                                description: b.description,
+                                industry: b.industry,
+                                location: b.location,
+                                price: b.financial_data?.asking_price || 0,
+                                image: getBusinessImage(b.industry, index),
+                                metrics: {
+                                    revenue_multiple: getRevenueMultiple(b.financial_data),
+                                    established: `Est. ${b.financial_data?.established_year || new Date(b.created_at).getFullYear()}`
+                                },
+                                financial_data: b.financial_data
+                            }));
+                        
+                        if (realBusinesses.length > 0) {
+                            allBusinesses = realBusinesses;
+                            renderBusinessCards(realBusinesses);
+                            document.getElementById('resultsCount').textContent = `${realBusinesses.length} businesses`;
+                            document.getElementById('showingResults').textContent = `Showing ${realBusinesses.length} results`;
+                            return;
+                        }
                     }
                 }
                 
-                // Fallback to sample data if API fails or no data
+                // Fallback to sample data if API fails or no real data
                 loadingState.style.display = 'none';
                 allBusinesses = sampleBusinesses;
                 renderBusinessCards(sampleBusinesses);
@@ -736,20 +776,79 @@
                 renderBusinessCards(sampleBusinesses);
             }
         }
-        
-        function getBusinessImage(industry) {
+
+        function getBusinessImage(industry, index = 0) {
             const industryImages = {
-                'Automotive': 'https://images.unsplash.com/photo-1625047509168-a7026f36de04?w=500&h=300&fit=crop',
-                'Food & Beverage': 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500&h=300&fit=crop',
-                'Restaurant': 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500&h=300&fit=crop',
-                'Technology': 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&h=300&fit=crop',
-                'Healthcare': 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=500&h=300&fit=crop',
-                'Health & Fitness': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&h=300&fit=crop',
-                'Retail': 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500&h=300&fit=crop',
-                'Professional Services': 'https://images.unsplash.com/photo-1556761175-4b46a572b786?w=500&h=300&fit=crop',
-                'Manufacturing': 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500&h=300&fit=crop'
+                'Automotive': [
+                    'https://images.unsplash.com/photo-1625047509168-a7026f36de04?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1487754180451-c456f719a1fc?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=500&h=300&fit=crop'
+                ],
+                'Food & Beverage': [
+                    'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1554679665-f5537f187268?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1521017432531-fbd92d768814?w=500&h=300&fit=crop'
+                ],
+                'Restaurant': [
+                    'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=500&h=300&fit=crop'
+                ],
+                'Technology': [
+                    'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1504384764586-bb4cdc1707b0?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&h=300&fit=crop'
+                ],
+                'Healthcare': [
+                    'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1581595220892-b0739db3ba8c?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1538108149393-fbbd81895907?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1516549655169-df83a0774514?w=500&h=300&fit=crop'
+                ],
+                'Health & Fitness': [
+                    'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1593079831268-3381b0db4a77?w=500&h=300&fit=crop'
+                ],
+                'Retail': [
+                    'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1481437156560-3205f6a55735?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1567449303212-57c5b2cb7de9?w=500&h=300&fit=crop'
+                ],
+                'Professional Services': [
+                    'https://images.unsplash.com/photo-1556761175-4b46a572b786?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1497366216548-37526070297c?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=500&h=300&fit=crop'
+                ],
+                'Manufacturing': [
+                    'https://images.unsplash.com/photo-1565043666747-69f6646db940?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1513828583688-c52646db42da?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=500&h=300&fit=crop'
+                ],
+                'Home Services': [
+                    'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1562113530-57ba467cea38?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=500&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1517646287270-a5a9ca602e5c?w=500&h=300&fit=crop'
+                ]
             };
-            return industryImages[industry] || 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=500&h=300&fit=crop';
+            
+            const images = industryImages[industry] || [
+                'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=500&h=300&fit=crop',
+                'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=500&h=300&fit=crop',
+                'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=300&fit=crop'
+            ];
+            
+            // Rotate through available images using the index
+            return images[index % images.length];
         }
         
         function getRevenueMultiple(financialData) {
@@ -760,14 +859,18 @@
             return `${multiple.toFixed(1)}x`;
         }
 
+        let currentBusinesses = []; // Store current business list
+        let allBusinesses = []; // Store all businesses for search/filter
+        
         function renderBusinessCards(businesses) {
             const grid = document.getElementById('businessGrid');
             currentBusinesses = businesses; // Store for viewBusiness function
             
-            grid.innerHTML = businesses.map(business => `
+            grid.innerHTML = businesses.map((business, index) => `
                 <div class="business-card" onclick="viewBusiness(${business.id})">
                     <div class="image-container">
-                        <img src="${business.image}" alt="${business.name}" class="business-image">
+                        <img src="${business.image || getBusinessImage(business.industry, index)}" alt="${business.name}" class="business-image">
+                        <div class="price-badge">$${(business.price || 0).toLocaleString()}</div>
                     </div>
                     <div class="business-content">
                         <div class="business-tags">
@@ -801,16 +904,7 @@
             `).join('');
         }
 
-        let currentBusinesses = []; // Store current business list
-        let allBusinesses = []; // Store all businesses for search/filter
-        
         function viewBusiness(businessId) {
-            // Store the business data for the detail page using current business list
-            const business = currentBusinesses.find(b => b.id === businessId);
-            if (business) {
-                localStorage.setItem('selectedBusiness', JSON.stringify(business));
-                localStorage.setItem('selectedBusinessId', businessId);
-            }
             window.location.href = `/business/${businessId}`;
         }
 
@@ -838,10 +932,10 @@
             
             switch(e.target.value) {
                 case 'price-low':
-                    sorted.sort((a, b) => (a.price || 0) - (b.price || 0));
+                    sorted.sort((a, b) => a.price - b.price);
                     break;
                 case 'price-high':
-                    sorted.sort((a, b) => (b.price || 0) - (a.price || 0));
+                    sorted.sort((a, b) => b.price - a.price);
                     break;
                 case 'newest':
                     // Keep original order (newest first)
@@ -852,6 +946,209 @@
             }
             
             renderBusinessCards(sorted);
+        });
+
+        function viewBusiness(businessId) {
+            // Store the business data for the detail page  
+            const business = currentBusinesses.find(b => b.id === businessId);
+            if (business) {
+                localStorage.setItem('selectedBusiness', JSON.stringify(business));
+                localStorage.setItem('selectedBusinessId', businessId);
+            }
+            window.location.href = `/business/${businessId}`;
+        }
+
+        // Filter functionality
+        let currentFilters = {
+            industry: 'all',
+            location: 'all',
+            priceRange: 'all'
+        };
+
+        function applyFilters() {
+            let filtered = [...allBusinesses];
+            
+            // Filter by industry
+            if (currentFilters.industry !== 'all') {
+                filtered = filtered.filter(b => b.industry === currentFilters.industry);
+            }
+            
+            // Filter by location
+            if (currentFilters.location !== 'all') {
+                filtered = filtered.filter(b => 
+                    b.location.city === currentFilters.location || 
+                    b.location.state === currentFilters.location
+                );
+            }
+            
+            // Filter by price range
+            if (currentFilters.priceRange !== 'all') {
+                const [min, max] = currentFilters.priceRange.split('-').map(n => parseInt(n) * 1000);
+                filtered = filtered.filter(b => {
+                    const price = b.price || 0;
+                    return price >= min && (!max || price <= max);
+                });
+            }
+            
+            renderBusinessCards(filtered);
+            document.getElementById('showingResults').textContent = `Showing ${filtered.length} results`;
+        }
+
+        // Industry filter dropdown
+        document.getElementById('industryFilter').addEventListener('click', function(e) {
+            e.stopPropagation();
+            const menu = document.createElement('div');
+            menu.className = 'filter-menu';
+            menu.innerHTML = `
+                <div class="filter-option" data-value="all">All Industries</div>
+                <div class="filter-option" data-value="Automotive">Automotive</div>
+                <div class="filter-option" data-value="Food & Beverage">Food & Beverage</div>
+                <div class="filter-option" data-value="Restaurant">Restaurant</div>
+                <div class="filter-option" data-value="Technology">Technology</div>
+                <div class="filter-option" data-value="Healthcare">Healthcare</div>
+                <div class="filter-option" data-value="Health & Fitness">Health & Fitness</div>
+                <div class="filter-option" data-value="Retail">Retail</div>
+                <div class="filter-option" data-value="Professional Services">Professional Services</div>
+                <div class="filter-option" data-value="Manufacturing">Manufacturing</div>
+            `;
+            
+            menu.style.cssText = `
+                position: absolute;
+                top: 100%;
+                left: 0;
+                background: white;
+                border: 1px solid #d1d5db;
+                border-radius: 6px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                z-index: 100;
+                min-width: 200px;
+                margin-top: 4px;
+            `;
+            
+            this.style.position = 'relative';
+            this.appendChild(menu);
+            
+            menu.addEventListener('click', function(e) {
+                if (e.target.classList.contains('filter-option')) {
+                    currentFilters.industry = e.target.dataset.value;
+                    document.querySelector('#industryFilter span').textContent = e.target.textContent;
+                    applyFilters();
+                }
+            });
+            
+            // Close menu when clicking outside
+            setTimeout(() => {
+                document.addEventListener('click', function closeMenu() {
+                    menu.remove();
+                    document.removeEventListener('click', closeMenu);
+                });
+            }, 0);
+        });
+
+        // Location filter dropdown
+        document.getElementById('locationFilter').addEventListener('click', function(e) {
+            e.stopPropagation();
+            const menu = document.createElement('div');
+            menu.className = 'filter-menu';
+            
+            // Get unique locations from current businesses
+            const locations = ['All Locations'];
+            const cities = new Set();
+            const states = new Set();
+            
+            allBusinesses.forEach(b => {
+                if (b.location.city) cities.add(b.location.city);
+                if (b.location.state) states.add(b.location.state);
+            });
+            
+            menu.innerHTML = `
+                <div class="filter-option" data-value="all">All Locations</div>
+                ${Array.from(cities).map(city => 
+                    `<div class="filter-option" data-value="${city}">${city}</div>`
+                ).join('')}
+                ${Array.from(states).map(state => 
+                    `<div class="filter-option" data-value="${state}">${state} (State)</div>`
+                ).join('')}
+            `;
+            
+            menu.style.cssText = `
+                position: absolute;
+                top: 100%;
+                left: 0;
+                background: white;
+                border: 1px solid #d1d5db;
+                border-radius: 6px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                z-index: 100;
+                min-width: 200px;
+                margin-top: 4px;
+                max-height: 300px;
+                overflow-y: auto;
+            `;
+            
+            this.style.position = 'relative';
+            this.appendChild(menu);
+            
+            menu.addEventListener('click', function(e) {
+                if (e.target.classList.contains('filter-option')) {
+                    currentFilters.location = e.target.dataset.value;
+                    document.querySelector('#locationFilter span').textContent = e.target.textContent;
+                    applyFilters();
+                }
+            });
+            
+            setTimeout(() => {
+                document.addEventListener('click', function closeMenu() {
+                    menu.remove();
+                    document.removeEventListener('click', closeMenu);
+                });
+            }, 0);
+        });
+
+        // Price filter dropdown
+        document.getElementById('priceFilter').addEventListener('click', function(e) {
+            e.stopPropagation();
+            const menu = document.createElement('div');
+            menu.className = 'filter-menu';
+            menu.innerHTML = `
+                <div class="filter-option" data-value="all">Any Price</div>
+                <div class="filter-option" data-value="0-100">Under $100K</div>
+                <div class="filter-option" data-value="100-250">$100K - $250K</div>
+                <div class="filter-option" data-value="250-500">$250K - $500K</div>
+                <div class="filter-option" data-value="500-1000">$500K - $1M</div>
+                <div class="filter-option" data-value="1000-">Over $1M</div>
+            `;
+            
+            menu.style.cssText = `
+                position: absolute;
+                top: 100%;
+                left: 0;
+                background: white;
+                border: 1px solid #d1d5db;
+                border-radius: 6px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                z-index: 100;
+                min-width: 200px;
+                margin-top: 4px;
+            `;
+            
+            this.style.position = 'relative';
+            this.appendChild(menu);
+            
+            menu.addEventListener('click', function(e) {
+                if (e.target.classList.contains('filter-option')) {
+                    currentFilters.priceRange = e.target.dataset.value;
+                    document.querySelector('#priceFilter span').textContent = e.target.textContent;
+                    applyFilters();
+                }
+            });
+            
+            setTimeout(() => {
+                document.addEventListener('click', function closeMenu() {
+                    menu.remove();
+                    document.removeEventListener('click', closeMenu);
+                });
+            }, 0);
         });
 
         // Initialize page

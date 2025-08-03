@@ -12,8 +12,9 @@ export class BookRecommendationService {
   private static readonly ASSOCIATE_TAG = process.env.AMAZON_ASSOCIATE_TAG || 'cashflowfinder-20';
   
   private static readonly BUSINESS_BOOKS: BookRecommendation[] = [
+    // General Business Acquisition
     {
-      asin: '1119751330',
+      asin: 'B07VSXS4NK',
       title: 'Buy Then Build: How Acquisition Entrepreneurs Outsmart the Startup Game',
       author: 'Walker Deibel',
       description: 'The definitive guide to acquiring existing businesses instead of starting from scratch. Perfect for first-time business buyers.',
@@ -22,7 +23,7 @@ export class BookRecommendationService {
       amazon_url: ''
     },
     {
-      asin: '0735213488',
+      asin: 'B07C7M8SX9',
       title: 'The Art of Selling Your Business: Winning Strategies & Secret Hacks for Exiting on Top',
       author: 'John Warrillow',
       description: 'Essential reading for understanding business valuations and what makes businesses attractive to buyers.',
@@ -31,7 +32,7 @@ export class BookRecommendationService {
       amazon_url: ''
     },
     {
-      asin: '1422144119',
+      asin: 'B00AKL36M8',
       title: 'Financial Intelligence: A Manager\'s Guide to Knowing What the Numbers Really Mean',
       author: 'Karen Berman',
       description: 'Understand financial statements and business metrics to make smarter acquisition decisions.',
@@ -40,7 +41,7 @@ export class BookRecommendationService {
       amazon_url: ''
     },
     {
-      asin: '1633697606',
+      asin: 'B071HFNVMN',
       title: 'HBR Guide to Buying a Small Business',
       author: 'Harvard Business Review',
       description: 'Harvard Business Review\'s practical guide to small business acquisitions.',
@@ -49,7 +50,7 @@ export class BookRecommendationService {
       amazon_url: ''
     },
     {
-      asin: '1422162672',
+      asin: 'B0058DRWRC',
       title: 'The Outsiders: Eight Unconventional CEOs and Their Radically Rational Blueprint for Success',
       author: 'William Thorndike',
       description: 'Learn from successful business operators and their acquisition strategies.',
@@ -58,7 +59,7 @@ export class BookRecommendationService {
       amazon_url: ''
     },
     {
-      asin: '1119611865',
+      asin: 'B08FHBV4ZX',
       title: 'Valuation: Measuring and Managing the Value of Companies',
       author: 'McKinsey & Company',
       description: 'Professional-grade business valuation techniques from McKinsey consultants.',
@@ -67,7 +68,7 @@ export class BookRecommendationService {
       amazon_url: ''
     },
     {
-      asin: '0470929898',
+      asin: 'B004XNLU9Q',
       title: 'Mergers, Acquisitions, and Corporate Restructurings',
       author: 'Patrick Gaughan',
       description: 'Comprehensive guide to M&A strategies and corporate restructuring.',
@@ -76,12 +77,112 @@ export class BookRecommendationService {
       amazon_url: ''
     },
     {
-      asin: '1118739868',
+      asin: 'B00JJ5QQ64',
       title: 'The SBA Loan Book: The Complete Guide to Getting Approved',
       author: 'Charles Green',
       description: 'Navigate SBA loans for business acquisitions with insider strategies.',
       category: 'financing',
       relevance_score: 6,
+      amazon_url: ''
+    },
+    
+    // Food & Beverage Industry Specific
+    {
+      asin: '1118336232',
+      title: 'Restaurant Financial Basics',
+      author: 'Raymond Goodman Jr.',
+      description: 'Financial management essentials for restaurant owners and investors.',
+      category: 'food_beverage',
+      relevance_score: 9,
+      amazon_url: ''
+    },
+    {
+      asin: '0471213659',
+      title: 'The Upstart Guide to Owning and Managing a Restaurant',
+      author: 'Roy Alonzo',
+      description: 'Complete guide to restaurant ownership, operations, and profitability.',
+      category: 'food_beverage',
+      relevance_score: 8,
+      amazon_url: ''
+    },
+    
+    // Technology Industry Specific
+    {
+      asin: '0062418203',
+      title: 'The Technology Fallacy: How People Are the Real Key to Digital Transformation',
+      author: 'Gerald Kane',
+      description: 'Understanding the human side of technology business acquisitions.',
+      category: 'technology',
+      relevance_score: 8,
+      amazon_url: ''
+    },
+    {
+      asin: '0062560921',
+      title: 'The Unicorn\'s Shadow: Combating the Dangerous Myths that Hold Back Startups',
+      author: 'Ethan Mollick',
+      description: 'Critical insights for evaluating technology companies and startups.',
+      category: 'technology',
+      relevance_score: 8,
+      amazon_url: ''
+    },
+    
+    // Healthcare Industry Specific
+    {
+      asin: '1449659799',
+      title: 'Healthcare Finance and Financial Management: Essentials for Advanced Practice Nurses',
+      author: 'Donna Torrisi',
+      description: 'Financial management principles for healthcare business acquisitions.',
+      category: 'healthcare',
+      relevance_score: 8,
+      amazon_url: ''
+    },
+    {
+      asin: '1284102238',
+      title: 'Medical Practice Management: Concepts and Applications',
+      author: 'Marsha Hemby',
+      description: 'Comprehensive guide to medical practice operations and valuation.',
+      category: 'healthcare',
+      relevance_score: 8,
+      amazon_url: ''
+    },
+    
+    // Retail Industry Specific
+    {
+      asin: '0470637692',
+      title: 'Retail Management: A Strategic Approach',
+      author: 'Barry Berman',
+      description: 'Strategic retail management for business acquisition evaluation.',
+      category: 'retail',
+      relevance_score: 8,
+      amazon_url: ''
+    },
+    {
+      asin: '0137069618',
+      title: 'Strategic Retail Management: Text and International Cases',
+      author: 'Joachim Zentes',
+      description: 'International perspective on retail business strategy and operations.',
+      category: 'retail',
+      relevance_score: 7,
+      amazon_url: ''
+    },
+    
+    // Manufacturing Industry Specific
+    {
+      asin: '0071756051',
+      title: 'Lean Manufacturing Implementation Strategies That Work',
+      author: 'Larry Fast',
+      description: 'Operational excellence strategies for manufacturing businesses.',
+      category: 'manufacturing',
+      relevance_score: 8,
+      amazon_url: ''
+    },
+    {
+      asin: '0814415210',
+      title: 'The Manufacturer\'s Guide to Implementing the Theory of Constraints',
+      author: 'Mark Woeppel',
+      description: 'Performance improvement strategies for manufacturing acquisitions.',
+      category: 'manufacturing',
+      relevance_score: 7,
       amazon_url: ''
     }
   ];
@@ -89,23 +190,42 @@ export class BookRecommendationService {
   static getRecommendationsByIndustry(industry: string, userTier: string = 'starter'): BookRecommendation[] {
     let recommendations = [...this.BUSINESS_BOOKS];
     
+    // Create industry mapping for better categorization
+    const industryMapping = {
+      'Food & Beverage': ['food_beverage', 'acquisition_strategy', 'financial_analysis'],
+      'Restaurant': ['food_beverage', 'acquisition_strategy', 'financial_analysis'],
+      'Technology': ['technology', 'acquisition_strategy', 'valuation'],
+      'Healthcare': ['healthcare', 'acquisition_strategy', 'financial_analysis'],
+      'Retail': ['retail', 'acquisition_strategy', 'business_operations'],
+      'Professional Services': ['business_operations', 'acquisition_strategy', 'financial_analysis'],
+      'Manufacturing': ['manufacturing', 'acquisition_strategy', 'valuation'],
+      'Automotive': ['manufacturing', 'acquisition_strategy', 'business_operations'],
+      'Construction': ['business_operations', 'acquisition_strategy', 'financial_analysis']
+    };
+    
     // Add industry-specific relevance scoring
     recommendations = recommendations.map(book => {
       let adjustedScore = book.relevance_score;
       
-      // Industry-specific adjustments
-      if (industry.toLowerCase().includes('restaurant') || industry.toLowerCase().includes('food')) {
-        if (book.category === 'due_diligence' || book.category === 'financial_analysis') {
-          adjustedScore += 2;
-        }
-      } else if (industry.toLowerCase().includes('tech') || industry.toLowerCase().includes('software')) {
-        if (book.category === 'valuation' || book.category === 'acquisition_strategy') {
-          adjustedScore += 2;
-        }
-      } else if (industry.toLowerCase().includes('service')) {
-        if (book.category === 'business_operations' || book.category === 'financial_analysis') {
-          adjustedScore += 1;
-        }
+      // Get relevant categories for this industry
+      const relevantCategories = industryMapping[industry as keyof typeof industryMapping] || ['acquisition_strategy'];
+      
+      // Boost scores for industry-specific books
+      if (relevantCategories.includes(book.category)) {
+        adjustedScore += 3;
+      }
+      
+      // Special boost for exact industry matches
+      if (industry.toLowerCase().includes('food') || industry.toLowerCase().includes('restaurant')) {
+        if (book.category === 'food_beverage') adjustedScore += 5;
+      } else if (industry.toLowerCase().includes('tech')) {
+        if (book.category === 'technology') adjustedScore += 5;
+      } else if (industry.toLowerCase().includes('healthcare')) {
+        if (book.category === 'healthcare') adjustedScore += 5;
+      } else if (industry.toLowerCase().includes('retail')) {
+        if (book.category === 'retail') adjustedScore += 5;
+      } else if (industry.toLowerCase().includes('manufacturing')) {
+        if (book.category === 'manufacturing') adjustedScore += 5;
       }
       
       return {
@@ -213,7 +333,7 @@ export class BookRecommendationService {
   }
   
   private static generateAmazonURL(asin: string): string {
-    return `https://www.amazon.com/gp/product/${asin}?ie=UTF8&tag=${this.ASSOCIATE_TAG}&linkCode=as2&camp=1789&creative=9325&creativeASIN=${asin}`;
+    return `https://www.amazon.com/dp/${asin}?tag=${this.ASSOCIATE_TAG}`;
   }
   
   static trackAffiliateClick(userId: string, asin: string): void {
