@@ -711,15 +711,71 @@
             }
         }
 
-        function loadBusinesses() {
+        async function loadBusinesses() {
             const grid = document.getElementById('businessGrid');
             const loadingState = document.getElementById('loadingState');
             
-            // Simulate loading
-            setTimeout(() => {
+            try {
+                // Fetch real businesses from API
+                const response = await fetch('/api/real-business/search?limit=50');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data.listings.length > 0) {
+                        loadingState.style.display = 'none';
+                        // Transform API data to match our format
+                        const businesses = data.data.listings.map(b => ({
+                            id: b.id,
+                            name: b.name,
+                            description: b.description,
+                            industry: b.industry,
+                            location: b.location,
+                            price: b.financial_data?.asking_price || 0,
+                            image: getBusinessImage(b.industry),
+                            metrics: {
+                                revenue_multiple: getRevenueMultiple(b.financial_data),
+                                established: `Est. ${b.financial_data?.established_year || new Date(b.created_at).getFullYear()}`
+                            },
+                            financial_data: b.financial_data
+                        }));
+                        renderBusinessCards(businesses);
+                        document.getElementById('resultsCount').textContent = `${businesses.length} businesses`;
+                        document.getElementById('showingResults').textContent = `Showing ${businesses.length} results`;
+                        return;
+                    }
+                }
+                
+                // Fallback to sample data if API fails or no data
                 loadingState.style.display = 'none';
                 renderBusinessCards(sampleBusinesses);
-            }, 1000);
+            } catch (error) {
+                console.error('Error loading businesses:', error);
+                loadingState.style.display = 'none';
+                renderBusinessCards(sampleBusinesses);
+            }
+        }
+        
+        function getBusinessImage(industry) {
+            const industryImages = {
+                'Automotive': 'https://images.unsplash.com/photo-1625047509168-a7026f36de04?w=500&h=300&fit=crop',
+                'Food & Beverage': 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500&h=300&fit=crop',
+                'Restaurant': 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500&h=300&fit=crop',
+                'Technology': 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&h=300&fit=crop',
+                'Healthcare': 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=500&h=300&fit=crop',
+                'Health & Fitness': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&h=300&fit=crop',
+                'Retail': 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500&h=300&fit=crop',
+                'Professional Services': 'https://images.unsplash.com/photo-1556761175-4b46a572b786?w=500&h=300&fit=crop',
+                'Manufacturing': 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500&h=300&fit=crop'
+            };
+            return industryImages[industry] || 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=500&h=300&fit=crop';
+        }
+        
+        function getRevenueMultiple(financialData) {
+            if (!financialData) return 'N/A';
+            const { asking_price, annual_revenue } = financialData;
+            if (!asking_price || !annual_revenue) return 'N/A';
+            const multiple = asking_price / annual_revenue;
+            return `${multiple.toFixed(1)}x`;
         }
 
         function renderBusinessCards(businesses) {
