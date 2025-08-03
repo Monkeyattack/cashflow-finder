@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cash Flow Finder - Find Your Next Business Opportunity</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5014438473043536"
+         crossorigin="anonymous"></script>
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: #ffffff;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        
+        /* New Header Design - Figma Style */
+        .header-bar {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: #1f2937;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.875rem;
+        }
+        
+        /* Central Search Bar */
+        .search-container {
+            flex: 1;
+            max-width: 500px;
+            position: relative;
+        }
+        
+        .search-bar {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #374151;
+            background: #f9fafb;
+            transition: all 0.2s;
+        }
+        
+        .search-bar:focus {
+            outline: none;
+            border-color: #2563eb;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .search-bar::placeholder {
+            color: #9ca3af;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            width: 16px;
+            height: 16px;
+        }
+        
+        /* Navigation Menu */
+        .main-nav {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+        
+        .nav-link {
+            color: #374151;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: color 0.2s;
+            padding: 8px 0;
+        }
+        
+        .nav-link:hover {
+            color: #1f2937;
+        }
+        
+        .sign-in-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #374151;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        
+        .sign-in-btn:hover {
+            background: #f9fafb;
+            color: #1f2937;
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            background: #f8fafc;
+            padding: 60px 0;
+            text-align: center;
+        }
+        
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.125rem;
+            color: #6b7280;
+            margin-bottom: 32px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .brand-assets-link {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .brand-assets-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* Filters Section */
+        .filters-section {
+            background: white;
+            padding: 24px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .filters-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .filters-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        
+        .filter-dropdown {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: #f9fafb;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            color: #374151;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .filter-dropdown:hover {
+            background: #f3f4f6;
+            border-color: #9ca3af;
+        }
+        
+        .filters-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        
+        .more-filters-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .results-info {
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .sort-dropdown {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: white;
+            color: #374151;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+        
+        .featured-businesses {
+            margin-bottom: 32px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .showing-results {
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        /* Business Cards Grid */
+        .business-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+        }
+        
+        .business-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .business-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .business-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            position: relative;
+        }
+        
+        .image-container {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            background: #f3f4f6;
+            overflow: hidden;
+        }
+        
+        .price-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .business-content {
+            padding: 20px;
+        }
+        
+        .business-tags {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .industry-tag {
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .location-tag {
+            background: #f3f4f6;
+            color: #6b7280;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .business-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+        
+        .business-description {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+        
+        .business-metrics {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid #f3f4f6;
+        }
+        
+        .metric {
+            text-align: center;
+        }
+        
+        .metric-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 2px;
+        }
+        
+        .metric-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #6b7280;
+        }
+        
+        .spinner {
+            border: 2px solid #f3f4f6;
+            border-top: 2px solid #2563eb;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                gap: 16px;
+                padding: 0 16px;
+            }
+            
+            .search-container {
+                max-width: none;
+            }
+            
+            .main-nav {
+                gap: 16px;
+            }
+            
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .filters-content {
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
+            }
+            
+            .filters-left {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+            
+            .business-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header-bar">
+        <div class="header-content">
+            <a href="/" class="logo">
+                <div class="logo-icon">C</div>
+                <span>CashFlow<span style="font-weight: 400;">Finder</span></span>
+            </a>
+            
+            <div class="search-container">
+                <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <input type="text" class="search-bar" placeholder="Search businesses, industries, locations..." id="searchInput">
+            </div>
+            
+            <nav class="main-nav">
+                <a href="/browse" class="nav-link">Browse</a>
+                <a href="/sell" class="nav-link">Sell</a>
+                <a href="/resources" class="nav-link">Resources</a>
+                <a href="/auth/login" class="sign-in-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="user-icon">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Sign In
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Find Your Next Business Opportunity</h1>
+            <p class="hero-subtitle">
+                Discover profitable businesses for sale across industries, from restaurants to tech startups. Find your perfect investment opportunity with detailed financials and growth potential.
+            </p>
+        </div>
+    </section>
+
+    <!-- Filters Section -->
+    <section class="filters-section">
+        <div class="filters-content">
+            <div class="filters-left">
+                <div class="filter-dropdown" id="industryFilter">
+                    <span>All Industries</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <polyline points="6,9 12,15 18,9"></polyline>
+                    </svg>
+                </div>
+                <div class="filter-dropdown" id="locationFilter">
+                    <span>All Locations</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <polyline points="6,9 12,15 18,9"></polyline>
+                    </svg>
+                </div>
+                <div class="filter-dropdown" id="priceFilter">
+                    <span>Any Price</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <polyline points="6,9 12,15 18,9"></polyline>
+                    </svg>
+                </div>
+            </div>
+            
+            <div class="filters-right">
+                <a href="#" class="more-filters-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"></polygon>
+                    </svg>
+                    More Filters
+                </a>
+                <span class="results-info" id="resultsCount">1,247 businesses</span>
+                <select class="sort-dropdown" id="sortSelect">
+                    <option value="newest">Newest</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="relevance">Most Relevant</option>
+                </select>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <section class="featured-businesses">
+            <div class="section-header">
+                <h2 class="section-title">Featured Businesses</h2>
+                <span class="showing-results" id="showingResults">Showing 6 results</span>
+            </div>
+            
+            <div class="business-grid" id="businessGrid">
+                <!-- Loading state -->
+                <div class="loading" id="loadingState">
+                    <div class="spinner"></div>
+                    <p>Loading businesses...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBcUfOEiZtGqf5Gx9VBMTPF0mO4U0CQ-jI",
+            authDomain: "cashflow-finder-v2.firebaseapp.com",
+            projectId: "cashflow-finder-v2",
+            storageBucket: "cashflow-finder-v2.appspot.com",
+            messagingSenderId: "1049067161601",
+            appId: "1:1049067161601:web:5ea046a4ae26c516285800"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        window.firebaseAuth = auth;
+        window.onAuthStateChanged = onAuthStateChanged;
+    </script>
+
+    <script>
+        let currentUser = null;
+        let businessData = [];
+
+        // Sample business data that matches the Figma design
+        const sampleBusinesses = [
+            {
+                id: 1,
+                name: "Established Italian Restaurant in Downtown",
+                description: "Thriving family restaurant with excellent reputation and loyal customer base.",
+                industry: "Restaurant",
+                location: { city: "San Francisco", state: "CA" },
+                price: 350000,
+                image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500&h=300&fit=crop",
+                metrics: {
+                    revenue_multiple: "3-5x",
+                    established: "Est. 2015"
+                }
+            },
+            {
+                id: 2,
+                name: "Profitable E-commerce Fashion Store",
+                description: "Growing online fashion boutique with strong social media presence and recurring customers.",
+                industry: "E-commerce", 
+                location: { city: "Austin", state: "TX" },
+                price: 45000,
+                image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500&h=300&fit=crop",
+                metrics: {
+                    revenue_multiple: "1-2x",
+                    established: "Est. 2020"
+                }
+            },
+            {
+                id: 3,
+                name: "Local Coffee Shop Chain (3 Locations)",
+                description: "Three successful coffee shop locations with strong following and prime real estate.",
+                industry: "Food & Beverage",
+                location: { city: "Portland", state: "OR" },
+                price: 240000,
+                image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=500&h=300&fit=crop",
+                metrics: {
+                    revenue_multiple: "15-20x",
+                    established: "Est. 2018"
+                }
+            },
+            {
+                id: 4,
+                name: "Digital Marketing Agency",
+                description: "Small but profitable digital marketing agency with over 3+ years of operating history.",
+                industry: "Technology",
+                location: { city: "Miami", state: "FL" },
+                price: 275000,
+                image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&h=300&fit=crop",
+                metrics: {
+                    revenue_multiple: "3-5x",
+                    established: "Est. 2019"
+                }
+            },
+            {
+                id: 5,
+                name: "Fitness Studio with Personal Training",
+                description: "Successful gym business with over 500 consistent members and strong rental income.",
+                industry: "Fitness",
+                location: { city: "Denver", state: "CO" },
+                price: 185000,
+                image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&h=300&fit=crop",
+                metrics: {
+                    revenue_multiple: "2-3x",
+                    established: "Est. 2017"
+                }
+            },
+            {
+                id: 6,
+                name: "Boutique Manufacturing Business",
+                description: "High-quality furniture production with established supply chain and manufacturing facilities.",
+                industry: "Manufacturing",
+                location: { city: "Nashville", state: "TN" },
+                price: 450000,
+                image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500&h=300&fit=crop",
+                metrics: {
+                    revenue_multiple: "4-6x", 
+                    established: "Est. 2014"
+                }
+            }
+        ];
+
+        // Check authentication
+        function checkAuth() {
+            window.onAuthStateChanged(window.firebaseAuth, (user) => {
+                if (user) {
+                    currentUser = {
+                        id: user.uid,
+                        email: user.email,
+                        name: user.displayName || user.email,
+                        subscription_tier: user.email === 'meredith@monkeyattack.com' ? 'enterprise' : 'professional'
+                    };
+                    // Update sign in button to show user
+                    updateAuthUI(true);
+                } else {
+                    currentUser = null;
+                    updateAuthUI(false);
+                }
+                loadBusinesses();
+            });
+        }
+
+        function updateAuthUI(isSignedIn) {
+            const signInBtn = document.querySelector('.sign-in-btn');
+            if (isSignedIn && currentUser) {
+                signInBtn.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="user-icon">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    ${currentUser.name.split(' ')[0]}
+                `;
+                signInBtn.href = '/profile';
+            } else {
+                signInBtn.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="user-icon">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Sign In
+                `;
+                signInBtn.href = '/auth/login';
+            }
+        }
+
+        function loadBusinesses() {
+            const grid = document.getElementById('businessGrid');
+            const loadingState = document.getElementById('loadingState');
+            
+            // Simulate loading
+            setTimeout(() => {
+                loadingState.style.display = 'none';
+                renderBusinessCards(sampleBusinesses);
+            }, 1000);
+        }
+
+        function renderBusinessCards(businesses) {
+            const grid = document.getElementById('businessGrid');
+            
+            grid.innerHTML = businesses.map(business => `
+                <div class="business-card" onclick="viewBusiness(${business.id})">
+                    <div class="image-container">
+                        <img src="${business.image}" alt="${business.name}" class="business-image">
+                    </div>
+                    <div class="business-content">
+                        <div class="business-tags">
+                            <span class="industry-tag">${business.industry}</span>
+                            <span class="location-tag">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                                ${business.location.city}, ${business.location.state}
+                            </span>
+                        </div>
+                        <h3 class="business-title">${business.name}</h3>
+                        <p class="business-description">${business.description}</p>
+                        <div class="business-metrics">
+                            <div class="metric">
+                                <div class="metric-label">Cash Flow</div>
+                                <div class="metric-value">${business.metrics.revenue_multiple}</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">Est. Year</div>
+                                <div class="metric-value">${business.metrics.established}</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">View Details</div>
+                                <div class="metric-value">→</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function viewBusiness(businessId) {
+            // Store the business data for the detail page
+            const business = sampleBusinesses.find(b => b.id === businessId);
+            if (business) {
+                localStorage.setItem('selectedBusiness', JSON.stringify(business));
+                localStorage.setItem('selectedBusinessId', businessId);
+            }
+            window.location.href = `/business/${businessId}`;
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            if (searchTerm === '') {
+                renderBusinessCards(sampleBusinesses);
+                return;
+            }
+            
+            const filtered = sampleBusinesses.filter(business => 
+                business.name.toLowerCase().includes(searchTerm) ||
+                business.industry.toLowerCase().includes(searchTerm) ||
+                business.location.city.toLowerCase().includes(searchTerm)
+            );
+            
+            renderBusinessCards(filtered);
+            document.getElementById('showingResults').textContent = `Showing ${filtered.length} results`;
+        });
+
+        // Sort functionality
+        document.getElementById('sortSelect').addEventListener('change', (e) => {
+            let sorted = [...sampleBusinesses];
+            
+            switch(e.target.value) {
+                case 'price-low':
+                    sorted.sort((a, b) => a.price - b.price);
+                    break;
+                case 'price-high':
+                    sorted.sort((a, b) => b.price - a.price);
+                    break;
+                case 'newest':
+                    // Keep original order (newest first)
+                    break;
+                case 'relevance':
+                    // Could implement relevance scoring
+                    break;
+            }
+            
+            renderBusinessCards(sorted);
+        });
+
+        // Initialize page
+        window.addEventListener('load', () => {
+            checkAuth();
+        });
+    </script>
+</body>
+</html>
