@@ -42,6 +42,33 @@ This project is a business marketplace (Cash Flow Finder) where users can browse
 
 ## Infrastructure Configuration
 
+### VPS Connection Info:
+- **SSH Command**: `ssh -i ~/.ssh/tao_alpha_dca_key root@172.93.51.42`
+- **Server IP**: 172.93.51.42
+- **SSH Key**: ~/.ssh/tao_alpha_dca_key
+- **Domain**: cashflowfinder.app
+
+### Deployment Info:
+- **App Directory**: /opt/apps/cashflow-finder
+- **Nginx Root**: /var/www/html
+- **Git Repository**: https://github.com/Monkeyattack/cashflow-finder.git
+- **Branch**: master
+
+### Database Connection:
+- **Host**: localhost
+- **Database**: cashflow_finder
+- **User**: cashflow_user
+- **Password**: AirpUgWN33IcU93D
+- **Port**: 5432
+
+### Deployment Process:
+1. `ssh -i ~/.ssh/tao_alpha_dca_key root@172.93.51.42`
+2. `cd /opt/apps/cashflow-finder && git pull`
+3. `cp [files] /var/www/html/` (for static files)
+4. `npm run build:server` (if needed)
+5. `pm2 restart cashflow-finder` (if needed)
+
+### Current Status:
 - Configure nginx with specific setup for VPS apps
 - Cloudflare is used for running applications
 - Update global configuration for infrastructure
