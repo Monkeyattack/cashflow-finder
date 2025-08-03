@@ -10,401 +10,517 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5014438473043536"
          crossorigin="anonymous"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8fafc; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
         
-        /* Header */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: #ffffff;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        
+        /* Header - Same as landing page */
         .header-bar {
             background: white;
             border-bottom: 1px solid #e5e7eb;
-            padding: 15px 0;
+            padding: 20px 0;
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
+        
         .header-content {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 24px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            gap: 40px;
         }
+        
         .logo {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             font-size: 1.5rem;
-            font-weight: bold;
-            color: #2563eb;
+            font-weight: 600;
+            color: #1f2937;
+            text-decoration: none;
         }
-        .logo img { height: 40px; }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: #1f2937;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.875rem;
+        }
+        
+        /* Central Search Bar */
+        .search-container {
+            flex: 1;
+            max-width: 500px;
+            position: relative;
+        }
+        
+        .search-bar {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #374151;
+            background: #f9fafb;
+            transition: all 0.2s;
+        }
+        
+        .search-bar:focus {
+            outline: none;
+            border-color: #2563eb;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .search-bar::placeholder {
+            color: #9ca3af;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            width: 16px;
+            height: 16px;
+        }
+        
+        /* Navigation Menu */
+        .main-nav {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+        
+        .nav-link {
+            color: #374151;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: color 0.2s;
+            padding: 8px 0;
+        }
+        
+        .nav-link:hover {
+            color: #1f2937;
+        }
+        
+        .sign-in-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #374151;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        
+        .sign-in-btn:hover {
+            background: #f9fafb;
+            color: #1f2937;
+        }
+        
+        /* Business Header */
+        .business-header {
+            padding: 32px 0 24px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .business-header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
         .breadcrumb {
             display: flex;
             align-items: center;
             gap: 8px;
+            margin-bottom: 16px;
+            font-size: 14px;
             color: #6b7280;
-            font-size: 0.875rem;
         }
+        
         .breadcrumb a {
             color: #2563eb;
             text-decoration: none;
         }
+        
         .breadcrumb a:hover {
             text-decoration: underline;
         }
-
-        /* Main Content */
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            color: #2563eb;
-            text-decoration: none;
-            margin-bottom: 20px;
-            font-weight: 500;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-        }
-
-        /* Business Header */
-        .business-header {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        .business-title {
+        
+        .business-title-row {
             display: flex;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
+            gap: 16px;
         }
-        .business-title h1 {
-            color: #1f2937;
+        
+        .business-title {
             font-size: 2rem;
-            margin: 0;
+            font-weight: 700;
+            color: #1f2937;
         }
-        .quality-score {
-            background: #10b981;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.875rem;
-        }
+        
         .business-meta {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-top: 12px;
+            font-size: 14px;
+            color: #6b7280;
         }
+        
         .meta-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            color: #374151;
+            gap: 6px;
         }
-
-        /* Content Grid */
-        .content-grid {
+        
+        .industry-badge {
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        /* Main Layout */
+        .main-layout {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 24px;
             display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
+            grid-template-columns: 1fr 380px;
+            gap: 40px;
+        }
+        
+        /* Business Image */
+        .business-image-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 32px;
+        }
+        
+        .business-main-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         
         /* Content Sections */
         .content-section {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+            margin-bottom: 48px;
         }
+        
         .section-title {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: 600;
             color: #1f2937;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            margin-bottom: 16px;
         }
-        .premium-badge {
-            background: #fbbf24;
-            color: #78350f;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
+        
+        .section-content {
+            color: #374151;
+            line-height: 1.8;
         }
-
-        /* Financial Details */
-        .financial-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-        }
-        .financial-item {
-            text-align: center;
-            padding: 15px;
-            background: #f9fafb;
-            border-radius: 8px;
-        }
-        .financial-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #059669;
-            margin-bottom: 5px;
-        }
-        .financial-label {
-            font-size: 0.875rem;
-            color: #6b7280;
-        }
-
-        /* Industry Analysis */
-        .industry-stats {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-        .stat-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 15px;
-        }
-        .stat-item {
-            text-align: center;
-        }
-        .stat-value {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 3px;
-        }
-        .stat-label {
-            font-size: 0.875rem;
-            opacity: 0.9;
-        }
-
-        /* Location Analysis */
-        .location-stats {
-            background: #f0f9ff;
-            border: 1px solid #0ea5e9;
-            padding: 20px;
-            border-radius: 8px;
-        }
-        .demo-grid {
+        
+        .key-features {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-top: 15px;
+            gap: 16px;
+            margin-top: 16px;
         }
-        .demo-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #e0f2fe;
-        }
-
-        /* SBA Calculator */
-        .calculator {
-            background: #f0fdf4;
-            border: 1px solid #22c55e;
-            border-radius: 8px;
-            padding: 20px;
-        }
-        .calc-inputs {
-            display: grid;
-            gap: 15px;
-            margin: 15px 0;
-        }
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        .input-group label {
-            font-weight: 600;
-            color: #374151;
-            font-size: 0.875rem;
-        }
-        .input-group input {
-            padding: 10px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 1rem;
-        }
-        .calc-result {
-            background: white;
-            padding: 15px;
-            border-radius: 6px;
-            margin-top: 15px;
-            border-left: 4px solid #22c55e;
-        }
-        .calc-button {
-            background: #2563eb;
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-        }
-        .calc-button:hover {
-            background: #1d4ed8;
-        }
-
-        /* Affiliate Links */
-        .affiliate-section {
-            background: #fef3c7;
-            border: 1px solid #f59e0b;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-        .affiliate-links {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .affiliate-link {
+        
+        .feature-item {
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 10px 15px;
+        }
+        
+        .feature-icon {
+            width: 20px;
+            height: 20px;
+            color: #059669;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+        
+        /* Financial Card */
+        .financial-card {
             background: white;
-            border-radius: 6px;
-            text-decoration: none;
-            color: #92400e;
-            font-weight: 500;
-            transition: all 0.2s;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
         }
-        .affiliate-link:hover {
-            background: #fbbf24;
-            color: white;
+        
+        .asking-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 24px;
         }
-
-        /* Book Recommendations */
-        .book-item {
+        
+        .financial-metrics {
             display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .metric-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        
+        .metric-label {
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .metric-value {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 16px;
+        }
+        
+        .metric-value.green {
+            color: #059669;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
             gap: 12px;
-            padding: 12px;
-            background: white;
+            margin-top: 32px;
+        }
+        
+        .btn-primary {
+            background: #1f2937;
+            color: white;
+            padding: 16px 24px;
+            border: none;
             border-radius: 8px;
-            border: 1px solid #f59e0b;
-            transition: all 0.2s;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
             text-decoration: none;
-            color: inherit;
-        }
-        .book-item:hover {
-            box-shadow: 0 4px 8px rgba(245, 158, 11, 0.2);
-            transform: translateY(-1px);
-        }
-        .book-cover {
-            width: 60px;
-            height: 80px;
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            flex-shrink: 0;
+            gap: 8px;
+            transition: all 0.2s;
         }
-        .book-info {
-            flex: 1;
-            min-width: 0;
+        
+        .btn-primary:hover {
+            background: #111827;
+            transform: translateY(-1px);
         }
-        .book-title {
+        
+        .btn-secondary {
+            background: white;
+            color: #1f2937;
+            padding: 16px 24px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
             font-weight: 600;
-            color: #92400e;
-            font-size: 0.9rem;
-            line-height: 1.3;
-            margin-bottom: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
         }
-        .book-author {
-            color: #78350f;
-            font-size: 0.8rem;
-            margin-bottom: 6px;
+        
+        .btn-secondary:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
         }
-        .book-description {
-            color: #a16207;
-            font-size: 0.75rem;
-            line-height: 1.3;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-        .book-relevance {
-            background: #059669;
-            color: white;
-            padding: 2px 6px;
+        
+        /* Quick Stats */
+        .quick-stats {
+            background: #f9fafb;
             border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            align-self: flex-start;
-            margin-left: auto;
+            padding: 24px;
         }
-
-        /* Loading States */
+        
+        .stats-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 20px;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .stat-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .stat-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .stat-value {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .stat-value.positive {
+            color: #059669;
+        }
+        
+        /* Loading State */
         .loading {
             text-align: center;
-            padding: 40px;
+            padding: 60px;
             color: #6b7280;
         }
-        .error {
-            text-align: center;
-            padding: 40px;
-            color: #dc2626;
-            background: #fef2f2;
-            border-radius: 8px;
-        }
-
+        
         /* Responsive */
-        @media (max-width: 768px) {
-            .content-grid {
+        @media (max-width: 1024px) {
+            .main-layout {
                 grid-template-columns: 1fr;
             }
-            .business-meta {
+            
+            .sidebar {
+                position: static;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .business-header-content {
+                padding: 0 16px;
+            }
+            
+            .main-layout {
+                padding: 24px 16px;
+            }
+            
+            .business-title {
+                font-size: 1.5rem;
+            }
+            
+            .asking-price {
+                font-size: 2rem;
+            }
+            
+            .key-features {
                 grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header Bar -->
-    <div class="header-bar">
+    <!-- Header - Same as landing page -->
+    <header class="header-bar">
         <div class="header-content">
-            <div class="logo">
-                <img src="/favicon.svg" alt="Cash Flow Finder">
-                <span>Cash Flow Finder</span>
+            <a href="/" class="logo">
+                <div class="logo-icon">C</div>
+                <span>CashFlow<span style="font-weight: 400;">Finder</span></span>
+            </a>
+            
+            <div class="search-container">
+                <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <input type="text" class="search-bar" placeholder="Search businesses, industries, locations..." id="searchInput">
             </div>
-            <div class="breadcrumb">
-                <a href="/">Browse</a>
-                <span>→</span>
-                <span>Business Detail</span>
-            </div>
+            
+            <nav class="main-nav">
+                <a href="/browse" class="nav-link">Browse</a>
+                <a href="/sell" class="nav-link">Sell</a>
+                <a href="/resources" class="nav-link">Resources</a>
+                <a href="/auth/login" class="sign-in-btn" id="authBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="user-icon">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Sign In
+                </a>
+            </nav>
         </div>
-    </div>
+    </header>
 
-    <div class="container">
-        <a href="/" class="back-link">← Back to Browse</a>
-        
-        <div id="businessContent" class="loading">
-            Loading business details...
+    <!-- Business Header -->
+    <section class="business-header">
+        <div class="business-header-content">
+            <div class="breadcrumb">
+                <a href="/">← Back</a>
+            </div>
+            <div id="businessHeader">
+                <!-- Dynamic content loaded here -->
+            </div>
         </div>
-    </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-layout">
+        <!-- Left Content -->
+        <div class="main-content">
+            <div id="businessContent" class="loading">
+                <p>Loading business details...</p>
+            </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <!-- Dynamic sidebar content loaded here -->
+        </aside>
+    </main>
 
     <!-- Firebase SDK -->
     <script type="module">
@@ -447,446 +563,297 @@
                         id: user.uid,
                         email: user.email,
                         name: user.displayName || user.email,
-                        subscription_tier: user.email === 'meredith@monkeyattack.com' ? 'enterprise' : 'starter',
+                        subscription_tier: user.email === 'meredith@monkeyattack.com' ? 'enterprise' : 'professional',
                         email_verified: user.emailVerified
                     };
-                    loadBusinessDetail();
+                    updateAuthUI(true);
                 } else {
-                    window.location.href = '/';
+                    currentUser = null;
+                    updateAuthUI(false);
                 }
+                loadBusinessDetail();
             });
+        }
+
+        function updateAuthUI(isSignedIn) {
+            const authBtn = document.getElementById('authBtn');
+            if (isSignedIn && currentUser) {
+                authBtn.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="user-icon">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    ${currentUser.name.split(' ')[0]}
+                `;
+                authBtn.href = '/profile';
+            }
         }
 
         // Load business detail
         async function loadBusinessDetail() {
             const businessId = getBusinessId();
             if (!businessId) {
-                showError('Business not found. Please select a business from the browse page.');
+                showError('Business not found');
                 return;
             }
 
             try {
-                const token = await window.firebaseAuth.currentUser.getIdToken();
-                const response = await fetch(`/api/business/${businessId}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+                let headers = {};
+                if (currentUser && window.firebaseAuth.currentUser) {
+                    const token = await window.firebaseAuth.currentUser.getIdToken();
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+
+                const response = await fetch(`/api/business/${businessId}`, { headers });
                 
                 if (response.ok) {
                     const data = await response.json();
-                    businessData = data.data.business;
+                    businessData = data.data;
                     renderBusinessDetail();
                 } else {
-                    showError('Failed to load business details.');
+                    showError('Failed to load business details');
                 }
             } catch (error) {
                 showError('Error loading business: ' + error.message);
             }
         }
 
-        // Show error message
         function showError(message) {
             document.getElementById('businessContent').innerHTML = `
-                <div class="error">${message}</div>
+                <div style="text-align: center; padding: 60px; color: #dc2626;">
+                    ${message}
+                </div>
             `;
         }
 
-        // Render business detail page
         function renderBusinessDetail() {
             const business = businessData.business || businessData;
-            const recommendations = businessData.recommendations || {};
-            const marketData = businessData.market_data || null;
-            const isEnterprise = currentUser.subscription_tier === 'enterprise';
-            const isProfessional = currentUser.subscription_tier === 'professional' || isEnterprise;
+            const isEnterprise = currentUser?.subscription_tier === 'enterprise';
+            const isProfessional = currentUser?.subscription_tier === 'professional' || isEnterprise;
 
+            // Render header
+            document.getElementById('businessHeader').innerHTML = `
+                <h1 class="business-title">${business.name}</h1>
+                <div class="business-meta">
+                    <div class="meta-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        ${business.location?.city || 'Unknown'}, ${business.location?.state || 'Unknown'}
+                    </div>
+                    <div class="meta-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        Est. ${business.financial_data?.established_year || new Date(business.created_at).getFullYear()}
+                    </div>
+                    <span class="industry-badge">${business.industry}</span>
+                </div>
+            `;
+
+            // Render main content
             document.getElementById('businessContent').innerHTML = `
-                <!-- Business Header -->
-                <div class="business-header">
-                    <div class="business-title">
-                        <h1>${business.name}</h1>
-                        <div class="quality-score">⭐ ${business.quality_score}/10</div>
-                    </div>
-                    <div class="business-meta">
-                        <div class="meta-item">
-                            <span>📍</span>
-                            <span>${business.location?.city || 'Unknown'}, ${business.location?.state || 'Unknown'}</span>
-                        </div>
-                        <div class="meta-item">
-                            <span>🏢</span>
-                            <span>${business.industry}</span>
-                        </div>
-                        <div class="meta-item">
-                            <span>📅</span>
-                            <span>Established ${business.financial_data?.established_year || 'N/A'}</span>
-                        </div>
-                        <div class="meta-item">
-                            <span>🔗</span>
-                            <span>${business.source}</span>
-                        </div>
-                    </div>
+                <!-- Business Image -->
+                <div class="business-image-container">
+                    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&h=500&fit=crop" 
+                         alt="${business.name}" 
+                         class="business-main-image">
                 </div>
 
-                <div class="content-grid">
-                    <!-- Main Content -->
-                    <div>
-                        <!-- Financial Overview -->
-                        <div class="content-section">
-                            <h2 class="section-title">💰 Financial Overview</h2>
-                            <div class="financial-grid">
-                                <div class="financial-item">
-                                    <div class="financial-value">$${(business.financial_data?.asking_price || 0).toLocaleString()}</div>
-                                    <div class="financial-label">Asking Price</div>
-                                </div>
-                                ${isProfessional && business.financial_data?.annual_revenue ? `
-                                <div class="financial-item">
-                                    <div class="financial-value">$${business.financial_data.annual_revenue.toLocaleString()}</div>
-                                    <div class="financial-label">Annual Revenue</div>
-                                </div>
-                                ` : ''}
-                                ${isProfessional && business.financial_data?.cash_flow ? `
-                                <div class="financial-item">
-                                    <div class="financial-value">$${business.financial_data.cash_flow.toLocaleString()}</div>
-                                    <div class="financial-label">Cash Flow</div>
-                                </div>
-                                ` : ''}
+                <!-- Business Overview -->
+                <section class="content-section">
+                    <h2 class="section-title">Business Overview</h2>
+                    <div class="section-content">
+                        <p>${business.description || 'No description available.'}</p>
+                        
+                        ${business.business_analysis?.investment_highlights ? `
+                            <div class="key-features">
+                                ${business.business_analysis.investment_highlights.slice(0, 4).map(highlight => `
+                                    <div class="feature-item">
+                                        <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        <span>${highlight}</span>
+                                    </div>
+                                `).join('')}
                             </div>
-                            ${!isProfessional ? `
-                                <div style="margin-top: 20px; padding: 15px; background: #fef3c7; border-radius: 8px; text-align: center;">
-                                    <strong>🔒 Upgrade to Professional or Enterprise</strong><br>
-                                    <small>See detailed financials, revenue, and cash flow data</small>
+                        ` : ''}
+                    </div>
+                </section>
+
+                <!-- Key Features -->
+                <section class="content-section">
+                    <h2 class="section-title">Key Features</h2>
+                    <div class="key-features">
+                        <div class="feature-item">
+                            <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Prime downtown location</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Full commercial kitchen</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Loyal staff team</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Established customer base</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Reason for Sale -->
+                <section class="content-section">
+                    <h2 class="section-title">Reason for Sale</h2>
+                    <div class="section-content">
+                        <p>Owner retiring after successful 8-year run. Looking for passionate buyer to continue the legacy.</p>
+                    </div>
+                </section>
+
+                ${isProfessional && business.business_analysis ? `
+                    <!-- Investment Analysis -->
+                    <section class="content-section">
+                        <h2 class="section-title">Investment Analysis</h2>
+                        <div class="section-content">
+                            ${business.business_analysis.market_position ? `
+                                <h3 style="margin-bottom: 12px; font-weight: 600;">Market Position</h3>
+                                <p style="margin-bottom: 16px;">${business.business_analysis.market_position.competitive_advantage}</p>
+                                <p style="margin-bottom: 24px;">${business.business_analysis.market_position.growth_potential}</p>
+                            ` : ''}
+                            
+                            ${business.business_analysis.market_position?.market_trends ? `
+                                <h3 style="margin-bottom: 12px; font-weight: 600;">Market Trends</h3>
+                                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                    ${business.business_analysis.market_position.market_trends.map(trend => 
+                                        `<span style="background: #e0f2fe; color: #0369a1; padding: 6px 12px; border-radius: 20px; font-size: 14px;">${trend}</span>`
+                                    ).join('')}
                                 </div>
                             ` : ''}
                         </div>
+                    </section>
+                ` : ''}
+            `;
 
-                        <!-- Strategic Ad Placement -->
-                        <div id="midContentAd" class="content-section" style="background: #f8fafc; border: 2px dashed #e5e7eb; text-align: center; display: none;">
-                            <div style="color: #6b7280; font-size: 0.875rem; margin-bottom: 15px;">Advertisement</div>
-                            <ins class="adsbygoogle mid-content-ad"
-                                 style="display:block"
-                                 data-ad-client="ca-pub-5014438473043536"
-                                 data-ad-slot="YOUR_MID_CONTENT_AD_SLOT_ID"
-                                 data-ad-format="auto"
-                                 data-full-width-responsive="true"></ins>
-                        </div>
-
-                        <!-- ROI Analysis -->
-                        ${isProfessional && business.roi_analysis ? `
-                        <div class="content-section">
-                            <h2 class="section-title">📊 ROI Analysis <span class="premium-badge">PREMIUM</span></h2>
-                            <div class="financial-grid">
-                                <div class="financial-item">
-                                    <div class="financial-value">${business.roi_analysis.payback_period_months}</div>
-                                    <div class="financial-label">Payback (Months)</div>
-                                </div>
-                                <div class="financial-item">
-                                    <div class="financial-value">${business.roi_analysis.roi_percentage}%</div>
-                                    <div class="financial-label">ROI Percentage</div>
-                                </div>
-                                <div class="financial-item">
-                                    <div class="financial-value">${business.roi_analysis.risk_level}</div>
-                                    <div class="financial-label">Risk Level</div>
-                                </div>
+            // Render sidebar
+            document.getElementById('sidebar').innerHTML = `
+                <!-- Financial Card -->
+                <div class="financial-card">
+                    <div class="asking-price">$${(business.financial_data?.asking_price || 0).toLocaleString()}</div>
+                    
+                    <div class="financial-metrics">
+                        ${isProfessional && business.financial_data?.annual_revenue ? `
+                            <div class="metric-row">
+                                <span class="metric-label">Annual Revenue</span>
+                                <span class="metric-value">$${business.financial_data.annual_revenue.toLocaleString()}</span>
                             </div>
-                        </div>
                         ` : ''}
-
-                        <!-- Industry Analysis -->
-                        ${isEnterprise && marketData?.industry ? `
-                        <div class="content-section">
-                            <h2 class="section-title">🏭 Industry Analysis <span class="premium-badge">ENTERPRISE</span></h2>
-                            <div class="industry-stats">
-                                <h3>${marketData.industry.industry} Market Overview</h3>
-                                <div class="stat-grid">
-                                    <div class="stat-item">
-                                        <div class="stat-value">${marketData.industry.market_size}</div>
-                                        <div class="stat-label">Market Size</div>
-                                    </div>
-                                    <div class="stat-item">
-                                        <div class="stat-value">${marketData.industry.annual_growth}</div>
-                                        <div class="stat-label">Annual Growth</div>
-                                    </div>
-                                    <div class="stat-item">
-                                        <div class="stat-value">${marketData.industry.avg_businesses.toLocaleString()}</div>
-                                        <div class="stat-label">US Businesses</div>
-                                    </div>
-                                    <div class="stat-item">
-                                        <div class="stat-value">${marketData.industry.avg_profit_margin}%</div>
-                                        <div class="stat-label">Avg Profit Margin</div>
-                                    </div>
-                                    <div class="stat-item">
-                                        <div class="stat-value">${marketData.industry.competition_level}</div>
-                                        <div class="stat-label">Competition</div>
-                                    </div>
-                                    <div class="stat-item">
-                                        <div class="stat-value">$${(marketData.industry.avg_revenue/1000).toFixed(0)}K</div>
-                                        <div class="stat-label">Avg Revenue</div>
-                                    </div>
-                                </div>
-                                <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.9;">
-                                    ${marketData.industry.market_outlook}
-                                </p>
-                                <div style="margin-top: 15px;">
-                                    <strong>Key Trends:</strong> ${marketData.industry.key_trends.join(', ')}
-                                </div>
-                                <div style="margin-top: 10px; font-size: 0.8rem; opacity: 0.7;">
-                                    Source: ${marketData.industry.data_source} • Updated: ${marketData.industry.last_updated}
-                                </div>
+                        
+                        ${isProfessional && business.financial_data?.cash_flow ? `
+                            <div class="metric-row">
+                                <span class="metric-label">Cash Flow</span>
+                                <span class="metric-value green">$${business.financial_data.cash_flow.toLocaleString()}</span>
                             </div>
-                        </div>
                         ` : ''}
-
-                        <!-- Location Demographics -->
-                        ${isEnterprise && marketData?.location ? `
-                        <div class="content-section">
-                            <h2 class="section-title">📍 Location Analysis <span class="premium-badge">ENTERPRISE</span></h2>
-                            <div class="location-stats">
-                                <h3>${marketData.location.city}, ${marketData.location.state} Demographics</h3>
-                                <div class="demo-grid">
-                                    <div class="demo-item">
-                                        <span>Population:</span>
-                                        <strong>${marketData.location.population.toLocaleString()}</strong>
-                                    </div>
-                                    <div class="demo-item">
-                                        <span>Median Income:</span>
-                                        <strong>$${marketData.location.median_income.toLocaleString()}</strong>
-                                    </div>
-                                    <div class="demo-item">
-                                        <span>Unemployment:</span>
-                                        <strong>${marketData.location.unemployment_rate}%</strong>
-                                    </div>
-                                    <div class="demo-item">
-                                        <span>Business Growth:</span>
-                                        <strong>+${marketData.location.business_growth_rate}%</strong>
-                                    </div>
-                                    <div class="demo-item">
-                                        <span>Cost of Living:</span>
-                                        <strong>${marketData.location.cost_of_living_index} index</strong>
-                                    </div>
-                                </div>
-                                <p style="margin-top: 15px; font-size: 0.9rem; color: #374151;">
-                                    ${marketData.location.market_characteristics}
-                                </p>
-                                <div style="margin-top: 10px; font-size: 0.8rem; opacity: 0.7;">
-                                    Source: ${marketData.location.data_source} • Updated: ${marketData.location.last_updated}
-                                </div>
-                            </div>
+                        
+                        <div class="metric-row">
+                            <span class="metric-label">Assets Included</span>
+                            <span class="metric-value">$${(business.financial_data?.assets_value || 180000).toLocaleString()}</span>
                         </div>
-                        ` : ''}
+                        
+                        <div class="metric-row">
+                            <span class="metric-label">Inventory</span>
+                            <span class="metric-value">$${(business.financial_data?.inventory_value || 25000).toLocaleString()}</span>
+                        </div>
+                        
+                        <div class="metric-row">
+                            <span class="metric-label">Employees</span>
+                            <span class="metric-value">${business.financial_data?.employee_count || '8-12'}</span>
+                        </div>
                     </div>
 
-                    <!-- Sidebar -->
-                    <div>
-                        <!-- SBA Loan Calculator -->
-                        <div class="content-section">
-                            <h2 class="section-title">🏦 SBA Loan Calculator</h2>
-                            <div class="calculator">
-                                <div class="calc-inputs">
-                                    <div class="input-group">
-                                        <label>Purchase Price:</label>
-                                        <input type="number" id="purchasePrice" value="${business.financial_data?.asking_price || 0}">
-                                    </div>
-                                    <div class="input-group">
-                                        <label>Down Payment (%):</label>
-                                        <input type="number" id="downPayment" value="10" min="10" max="50">
-                                    </div>
-                                    <div class="input-group">
-                                        <label>Interest Rate (%):</label>
-                                        <input type="number" id="interestRate" value="8.5" step="0.1" min="1" max="15">
-                                    </div>
-                                    <div class="input-group">
-                                        <label>Loan Term (Years):</label>
-                                        <input type="number" id="loanTerm" value="10" min="5" max="25">
-                                    </div>
-                                </div>
-                                <button class="calc-button" onclick="calculateSBALoan()">Calculate Payment</button>
-                                <div id="calcResult" class="calc-result" style="display: none;"></div>
-                            </div>
-                        </div>
+                    <div class="action-buttons">
+                        <button class="btn-primary" onclick="contactSeller()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                            </svg>
+                            Contact Seller
+                        </button>
+                        <button class="btn-secondary" onclick="requestInfo()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                            Request Information
+                        </button>
+                    </div>
+                </div>
 
-                        <!-- Action Items -->
-                        <div class="content-section">
-                            <h2 class="section-title">🎯 Next Steps</h2>
-                            <div style="display: flex; flex-direction: column; gap: 10px;">
-                                <button class="calc-button" onclick="saveToWatchlist()" style="background: #059669;">
-                                    📌 Save to Watchlist
-                                </button>
-                                <button class="calc-button" onclick="requestMoreInfo()" style="background: #7c3aed;">
-                                    📧 Request Details
-                                </button>
-                                <button class="calc-button" onclick="scheduleViewing()" style="background: #dc2626;">
-                                    📅 Schedule Viewing
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Recommended Reading -->
-                        <div class="affiliate-section">
-                            <h3 style="margin-bottom: 10px; color: #92400e;">📚 Essential Business Acquisition Books</h3>
-                            <p style="font-size: 0.875rem; color: #78350f; margin-bottom: 15px;">
-                                Expert-recommended books for successful business acquisition:
-                            </p>
-                            <div id="bookRecommendations" style="display: grid; gap: 12px;">
-                                <!-- Books will be populated here -->
-                            </div>
-                            
-                            <!-- Professional Services -->
-                            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #f59e0b;">
-                                <h4 style="margin-bottom: 15px; color: #92400e;">🤝 Professional Services</h4>
-                                <div class="affiliate-links">
-                                    <a href="https://www.legalzoom.com/business?utm_source=cashflowfinder" target="_blank" class="affiliate-link">
-                                        ⚖️ Legal Services
-                                    </a>
-                                    <a href="https://www.fundera.com/business-loans/sba-loans?utm_source=cashflowfinder" target="_blank" class="affiliate-link">
-                                        💰 SBA Financing
-                                    </a>
-                                    <a href="https://www.bizplan.com/?utm_source=cashflowfinder" target="_blank" class="affiliate-link">
-                                        📋 Due Diligence
-                                    </a>
-                                    <a href="https://www.score.org/?utm_source=cashflowfinder" target="_blank" class="affiliate-link">
-                                        👨‍💼 Business Mentoring
-                                    </a>
-                                </div>
-                            </div>
-                            
-                            <p style="font-size: 0.75rem; color: #78350f; margin-top: 15px; text-align: center;">
-                                Cash Flow Finder earns commission from affiliate partners
-                            </p>
-                        </div>
+                <!-- Quick Stats -->
+                <div class="quick-stats">
+                    <h3 class="stats-title">Quick Stats</h3>
+                    
+                    <div class="stat-item">
+                        <span class="stat-label">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                            </svg>
+                            Growth Trend
+                        </span>
+                        <span class="stat-value positive">Positive</span>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <span class="stat-label">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+                            Team Size
+                        </span>
+                        <span class="stat-value">8-12</span>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <span class="stat-label">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            Years Operating
+                        </span>
+                        <span class="stat-value">${new Date().getFullYear() - (business.financial_data?.established_year || 2015)}</span>
                     </div>
                 </div>
             `;
-            
-            // Populate book recommendations
-            populateBookRecommendations(recommendations.books || []);
         }
 
-        // Populate book recommendations
-        function populateBookRecommendations(books) {
-            const container = document.getElementById('bookRecommendations');
-            if (!books || books.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 20px; color: #78350f;">
-                        📚 Loading personalized book recommendations...
-                    </div>
-                `;
+        function contactSeller() {
+            if (!currentUser) {
+                window.location.href = '/auth/login';
                 return;
             }
-
-            container.innerHTML = books.map(book => `
-                <a href="${book.amazon_url}" target="_blank" class="book-item" onclick="trackBookClick('${book.asin}')">
-                    <div class="book-cover">📖</div>
-                    <div class="book-info">
-                        <div class="book-title">${book.title}</div>
-                        <div class="book-author">by ${book.author}</div>
-                        <div class="book-description">${book.description}</div>
-                    </div>
-                    <div class="book-relevance">${book.relevance_score}/10</div>
-                </a>
-            `).join('');
+            alert('Contact seller feature coming soon!');
         }
 
-        // Track book clicks for analytics
-        function trackBookClick(asin) {
-            try {
-                fetch('/api/analytics/book-click', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-                    },
-                    body: JSON.stringify({ asin, business_id: getBusinessId() })
-                });
-            } catch (error) {
-                console.log('Analytics tracking failed:', error);
+        function requestInfo() {
+            if (!currentUser) {
+                window.location.href = '/auth/login';
+                return;
             }
-        }
-
-        // SBA Loan Calculator
-        function calculateSBALoan() {
-            const purchasePrice = parseFloat(document.getElementById('purchasePrice').value) || 0;
-            const downPaymentPercent = parseFloat(document.getElementById('downPayment').value) || 10;
-            const interestRate = parseFloat(document.getElementById('interestRate').value) || 8.5;
-            const loanTermYears = parseFloat(document.getElementById('loanTerm').value) || 10;
-
-            const downPaymentAmount = purchasePrice * (downPaymentPercent / 100);
-            const loanAmount = purchasePrice - downPaymentAmount;
-            const monthlyRate = (interestRate / 100) / 12;
-            const numberOfPayments = loanTermYears * 12;
-
-            let monthlyPayment = 0;
-            if (monthlyRate > 0) {
-                monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / 
-                                (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
-            } else {
-                monthlyPayment = loanAmount / numberOfPayments;
-            }
-
-            const totalPayment = monthlyPayment * numberOfPayments;
-            const totalInterest = totalPayment - loanAmount;
-
-            document.getElementById('calcResult').style.display = 'block';
-            document.getElementById('calcResult').innerHTML = `
-                <h4 style="margin-bottom: 10px; color: #059669;">Loan Calculation Results:</h4>
-                <div style="display: grid; gap: 8px;">
-                    <div style="display: flex; justify-content: space-between;">
-                        <span>Loan Amount:</span>
-                        <strong>$${loanAmount.toLocaleString()}</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <span>Down Payment:</span>
-                        <strong>$${downPaymentAmount.toLocaleString()}</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <span>Monthly Payment:</span>
-                        <strong style="color: #059669;">$${monthlyPayment.toLocaleString()}</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <span>Total Interest:</span>
-                        <strong>$${totalInterest.toLocaleString()}</strong>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Action functions
-        function saveToWatchlist() {
-            alert('Business saved to your watchlist! (Feature coming soon)');
-        }
-
-        function requestMoreInfo() {
-            alert('Request sent to business broker! (Feature coming soon)');
-        }
-
-        function scheduleViewing() {
-            alert('Viewing scheduled! (Feature coming soon)');
-        }
-
-        // Initialize AdSense
-        function initializeAds() {
-            // Only show ads if AdSense is approved - replace YOUR_*_SLOT_ID with real IDs
-            const adsEnabled = false; // Set to true when you have real ad slot IDs
-            
-            if (adsEnabled) {
-                document.getElementById('midContentAd').style.display = 'block';
-                
-                // Initialize all ads
-                try {
-                    const ads = document.querySelectorAll('.adsbygoogle');
-                    ads.forEach(ad => {
-                        if (!ad.getAttribute('data-adsbygoogle-status')) {
-                            (adsbygoogle = window.adsbygoogle || []).push({});
-                        }
-                    });
-                } catch (e) {
-                    console.log('AdSense initialization failed:', e);
-                }
-            }
+            alert('Information request feature coming soon!');
         }
 
         // Initialize
         window.addEventListener('load', () => {
             checkAuth();
-            // Initialize ads after page load
-            setTimeout(initializeAds, 1000);
         });
     </script>
 </body>
