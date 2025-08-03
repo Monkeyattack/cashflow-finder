@@ -668,6 +668,8 @@
             const business = businessData.business || businessData;
             const isEnterprise = currentUser?.subscription_tier === 'enterprise';
             const isProfessional = currentUser?.subscription_tier === 'professional' || isEnterprise;
+            
+            console.log('Rendering business:', business);
 
             // Render header
             document.getElementById('businessHeader').innerHTML = `

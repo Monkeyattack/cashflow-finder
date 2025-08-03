@@ -738,6 +738,7 @@
                             },
                             financial_data: b.financial_data
                         }));
+                        allBusinesses = businesses; // Store for search/filter
                         renderBusinessCards(businesses);
                         document.getElementById('resultsCount').textContent = `${businesses.length} businesses`;
                         document.getElementById('showingResults').textContent = `Showing ${businesses.length} results`;
@@ -747,10 +748,12 @@
                 
                 // Fallback to sample data if API fails or no data
                 loadingState.style.display = 'none';
+                allBusinesses = sampleBusinesses;
                 renderBusinessCards(sampleBusinesses);
             } catch (error) {
                 console.error('Error loading businesses:', error);
                 loadingState.style.display = 'none';
+                allBusinesses = sampleBusinesses;
                 renderBusinessCards(sampleBusinesses);
             }
         }
@@ -780,6 +783,7 @@
 
         function renderBusinessCards(businesses) {
             const grid = document.getElementById('businessGrid');
+            currentBusinesses = businesses; // Store for viewBusiness function
             
             grid.innerHTML = businesses.map(business => `
                 <div class="business-card" onclick="viewBusiness(${business.id})">
@@ -818,9 +822,12 @@
             `).join('');
         }
 
+        let currentBusinesses = []; // Store current business list
+        let allBusinesses = []; // Store all businesses for search/filter
+        
         function viewBusiness(businessId) {
-            // Store the business data for the detail page
-            const business = sampleBusinesses.find(b => b.id === businessId);
+            // Store the business data for the detail page using current business list
+            const business = currentBusinesses.find(b => b.id === businessId);
             if (business) {
                 localStorage.setItem('selectedBusiness', JSON.stringify(business));
                 localStorage.setItem('selectedBusinessId', businessId);
@@ -832,11 +839,11 @@
         document.getElementById('searchInput').addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase();
             if (searchTerm === '') {
-                renderBusinessCards(sampleBusinesses);
+                renderBusinessCards(allBusinesses);
                 return;
             }
             
-            const filtered = sampleBusinesses.filter(business => 
+            const filtered = allBusinesses.filter(business => 
                 business.name.toLowerCase().includes(searchTerm) ||
                 business.industry.toLowerCase().includes(searchTerm) ||
                 business.location.city.toLowerCase().includes(searchTerm)
@@ -848,14 +855,14 @@
 
         // Sort functionality
         document.getElementById('sortSelect').addEventListener('change', (e) => {
-            let sorted = [...sampleBusinesses];
+            let sorted = [...allBusinesses];
             
             switch(e.target.value) {
                 case 'price-low':
-                    sorted.sort((a, b) => a.price - b.price);
+                    sorted.sort((a, b) => (a.price || 0) - (b.price || 0));
                     break;
                 case 'price-high':
-                    sorted.sort((a, b) => b.price - a.price);
+                    sorted.sort((a, b) => (b.price || 0) - (a.price || 0));
                     break;
                 case 'newest':
                     // Keep original order (newest first)
